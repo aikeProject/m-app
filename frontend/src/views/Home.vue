@@ -1,6 +1,11 @@
 <template>
   <div class="home">
-    <img @click="getMessage" alt="Vue logo" src="../assets/appicon.png" :style="{ height: '400px' }"/>
+    <img
+      @click="getMessage"
+      alt="Vue logo"
+      src="../assets/appicon.png"
+      :style="{ height: '400px' }"
+    />
     <HelloWorld :msg="message" />
   </div>
 </template>
@@ -22,19 +27,18 @@ declare global {
 export default defineComponent({
   name: "Home",
   components: {
-    HelloWorld,
+    HelloWorld
   },
   setup() {
-    
     const message = ref("Click the Icon");
 
     const getMessage = () => {
       window.backend.basic().then(result => {
         message.value = result;
       });
-    }
+    };
 
     return { message: message, getMessage: getMessage };
-  },
+  }
 });
 </script>
