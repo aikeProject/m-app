@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 let cssConfig = {};
 
 if (process.env.NODE_ENV === "production") {
@@ -8,6 +11,8 @@ if (process.env.NODE_ENV === "production") {
     }
   };
 }
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 module.exports = {
   chainWebpack: config => {
@@ -26,6 +31,10 @@ module.exports = {
       .options({
         limit: limit
       });
+    // 导入方式变化
+    // import installElementPlus from "./plugins/element"; 这样的导入方式变为
+    // import installElementPlus from "plugins/element";
+    config.resolve.modules.add(resolveApp("src"));
   },
   css: cssConfig,
   configureWebpack: {
