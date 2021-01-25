@@ -43,6 +43,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import Wails from "@wailsapp/runtime";
 
 interface Todo {
   id: number;
@@ -65,6 +66,15 @@ export default defineComponent({
       if (binding.value) {
         el.focus();
       }
+    }
+  },
+  watch: {
+    todos: {
+      handler(todos) {
+        // 打印日志
+        Wails.Log.Info("Todo List: " + JSON.stringify(todos));
+      },
+      deep: true
     }
   },
   methods: {
