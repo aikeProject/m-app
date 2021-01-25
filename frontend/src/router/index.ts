@@ -1,6 +1,7 @@
 import { createRouter, createMemoryHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
-import About from "../views/About.vue";
+import Home from "views/Home.vue";
+import About from "views/About.vue";
+import Todo from "views/Todo.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,6 +17,11 @@ const routes: Array<RouteRecordRaw> = [
     // which is lazy-loaded when the route is visited.
     // component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
     component: About
+  },
+  {
+    path: "/todo",
+    name: "todo",
+    component: Todo
   }
 ];
 
