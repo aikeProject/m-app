@@ -4,8 +4,7 @@ declare module "*.vue" {
   export default component;
 }
 
-declare global {
-  interface Window {
-    backend: any;
-  }
+namespace backend {
+  function basic(): Promise<string>;
+  function saveList(string): Promise<string>;
 }

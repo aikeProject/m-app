@@ -73,6 +73,7 @@ export default defineComponent({
       handler(todos) {
         // 打印日志
         Wails.Log.Info("Todo List: " + JSON.stringify(todos));
+        window.backend.saveList(JSON.stringify(todos));
       },
       deep: true
     }

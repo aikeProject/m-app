@@ -14,16 +14,6 @@
 import { ref, defineComponent } from "vue";
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 
-interface Backend {
-  basic(): Promise<string>;
-}
-
-declare global {
-  interface Window {
-    backend: Backend;
-  }
-}
-
 export default defineComponent({
   name: "Home",
   components: {
