@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/leaanthony/mewn"
 	"github.com/wailsapp/wails"
 	"io/ioutil"
@@ -26,8 +27,11 @@ func loadList() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	filename := path.Join(cwd, "myList.json")
+	filename := path.Join(cwd, "my.json")
 	result, err := ioutil.ReadFile(filename)
+	if err != nil {
+		err = fmt.Errorf("Unable to open list: %s ", filename)
+	}
 	return string(result), err
 }
 

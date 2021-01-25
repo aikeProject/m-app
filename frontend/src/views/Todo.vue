@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2 v-if="errorMessage.length > 0">{{ errorMessage }}</h2>
     <section class="todoapp" v-cloak>
       <header class="header">
         <h1>todos</h1>
@@ -55,6 +56,7 @@ export default defineComponent({
   name: "Todo",
   data() {
     return {
+      errorMessage: "",
       newTodo: "",
       beforeEditCache: "",
       editedTodo: null as Todo | null,
@@ -119,13 +121,35 @@ export default defineComponent({
     }
   },
   mounted() {
-    window.backend.loadList().then(list => {
-      try {
-        this.todos = JSON.parse(list);
-      } catch (e) {
-        Wails.Log.Info("An error was thrown: " + e.message);
-      }
-    });
+    window.backend
+      .loadList()
+      .then(list => {
+        try {
+          this.todos = JSON.parse(list);
+        } catch (e) {
+          this.errorMessage = "Unable to load todo list";
+          setTimeout(() => {
+            this.errorMessage = "";
+          }, 3000);
+        }
+      })
+      .catch(error => {
+        this.errorMessage = error;
+        setTimeout(() => {
+          this.errorMessage = "";
+        }, 3000);
+      });
   }
 });
 </script>
+
+<style scoped lang="stylus">
+h2
+  text-align: center;
+  color: white;
+  background-color: red;
+  min-width: 230px;
+  max-width: 550px;
+  padding: 1rem;
+  border-radius: 0.5rem;
+</style>
