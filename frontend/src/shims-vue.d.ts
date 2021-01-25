@@ -7,4 +7,5 @@ declare module "*.vue" {
 namespace backend {
   function basic(): Promise<string>;
   function saveList(string): Promise<string>;
+  function loadList(): Promise<any>;
 }

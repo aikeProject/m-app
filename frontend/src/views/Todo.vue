@@ -117,6 +117,15 @@ export default defineComponent({
       this.editedTodo = null;
       todo.title = this.beforeEditCache;
     }
+  },
+  mounted() {
+    window.backend.loadList().then(list => {
+      try {
+        this.todos = JSON.parse(list);
+      } catch (e) {
+        Wails.Log.Info("An error was thrown: " + e.message);
+      }
+    });
   }
 });
 </script>
