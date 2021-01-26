@@ -18,19 +18,7 @@ type Todos struct {
 
 // NewTodos attempts to create a new Todo list
 func NewTodos() (*Todos, error) {
-	// Create new Todos instance
-	result := &Todos{}
-	// Try and get the current working directory
-	cwd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-	// Join the cwd with our todos filename
-	filename := path.Join(cwd, "myList.json")
-	// Set the filename member of our new Todo list
-	result.filename = filename
-	// Return it
-	return result, nil
+	return &Todos{}, nil
 }
 
 // 加载列表
@@ -84,10 +72,33 @@ func (t Todos) startWatcher() error {
 	return nil
 }
 
+// 文件不存在则创建一个
+func (t *Todos) ensureFileExists() {
+	// Check status of file
+	_, err := os.Stat(t.filename)
+	// If it doesn't exist
+	if os.IsNotExist(err) {
+		// Create it with a blank list
+		err := ioutil.WriteFile(t.filename, []byte("[]"), 0600)
+		if err != nil {
+			t.logger.Error(err.Error())
+		}
+	}
+}
+
 // 获取"wails"的运行时环境"runtime"
 func (t *Todos) WailsInit(runtime *wails.Runtime) error {
 	t.runtime = runtime
 	t.logger = t.runtime.Log.New("Todos")
-	t.logger.Info("哈哈哈...")
+	t.logger.Info("todos is demo...")
+
+	// Set the default filename to $HOMEDIR/todos.json
+	homedir, err := runtime.FileSystem.HomeDir()
+	if err != nil {
+		return err
+	}
+	t.filename = path.Join(homedir, "Desktop/todos.json")
+
+	t.ensureFileExists()
 	return t.startWatcher()
 }
