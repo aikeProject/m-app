@@ -5,11 +5,16 @@
       <header class="header">
         <h1>todos</h1>
         <div class="buttons">
-          <ul class="filters">
-            <li>
-              <a @click="saveAs">Save As</a>
-            </li>
-          </ul>
+          <div class="buttons">
+            <ul class="filters">
+              <li>
+                <a @click="saveAs">Save As</a>
+              </li>
+              <li>
+                <a @click="loadNewList">Load</a>
+              </li>
+            </ul>
+          </div>
         </div>
         <input
           class="new-todo"
@@ -131,8 +136,11 @@ export default defineComponent({
       this.editedTodo = null;
       todo.title = this.beforeEditCache;
     },
-    saveAs: function() {
+    saveAs() {
       window.backend.Todos.SaveAs(JSON.stringify(this.todos, null, 2));
+    },
+    loadNewList() {
+      window.backend.Todos.LoadNewList();
     },
     setErrorMessage(message: string) {
       this.errorMessage = message;

@@ -55,6 +55,17 @@ func (t *Todos) saveListByName(todos string, filename string) error {
 	return ioutil.WriteFile(filename, []byte(todos), 0600)
 }
 
+func (t *Todos) LoadNewList() error {
+	var err error
+	filename := t.runtime.Dialog.SelectFile()
+	if len(filename) > 0 {
+		err = t.setFilename(filename)
+		t.runtime.Events.Emit("fileModified")
+	}
+
+	return err
+}
+
 // 监听文件变化
 func (t *Todos) startWatcher() error {
 	t.logger.Infof("开始监听...")
