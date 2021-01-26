@@ -29,7 +29,7 @@ func (t *Todos) LoadList() (string, error) {
 		err = fmt.Errorf("Unable to open list: %s ", t.filename)
 	}
 	// 发送消息
-	t.runtime.Events.Emit("error", "来自Go程序的数据...")
+	//t.runtime.Events.Emit("error", "来自Go程序的数据...")
 	return string(bytes), err
 }
 
