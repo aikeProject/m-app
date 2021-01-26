@@ -29,7 +29,7 @@
             <input
               class="edit"
               type="text"
-              v-model="todo.title"
+              v-model.lazy="todo.title"
               v-todo-focus="todo === editedTodo"
               @keyup.enter="doneEdit(todo)"
               @blur="doneEdit(todo)"
@@ -60,7 +60,8 @@ export default defineComponent({
       newTodo: "",
       beforeEditCache: "",
       editedTodo: null as Todo | null,
-      todos: [{ id: 0, title: "My test todo item", completed: true }] as Todo[]
+      todos: [{ id: 0, title: "My test todo item", completed: true }] as Todo[],
+      loading: false
     };
   },
   directives: {
@@ -73,6 +74,10 @@ export default defineComponent({
   watch: {
     todos: {
       handler(todos) {
+        if (this.loading) {
+          this.loading = false;
+          return;
+        }
         // 打印日志
         Wails.Log.Info("Todo List: " + JSON.stringify(todos));
         window.backend.Todos.SaveList(JSON.stringify(todos, null, 2));
@@ -118,34 +123,41 @@ export default defineComponent({
     cancelEdit: function(todo: Todo) {
       this.editedTodo = null;
       todo.title = this.beforeEditCache;
-    }
-  },
-  mounted() {
-    // 监听来自Go程序的消息
-    Wails.Events.On("error", message => {
+    },
+    setErrorMessage(message: string) {
       this.errorMessage = message;
       setTimeout(() => {
         this.errorMessage = "";
       }, 3000);
+    },
+    // 加载列表
+    loadList: function() {
+      window.backend.Todos.LoadList()
+        .then(list => {
+          try {
+            this.todos = JSON.parse(list);
+            this.loading = true;
+          } catch (e) {
+            this.setErrorMessage("Unable to load todo list");
+          }
+        })
+        .catch(error => {
+          this.setErrorMessage(error.message);
+        });
+    }
+  },
+  mounted() {
+    Wails.Events.On("fileModified", () => {
+      // this.setErrorMessage("File Modified");
+      this.loadList();
     });
-    // 调用Go程序提供的方法
-    window.backend.Todos.LoadList()
-      .then(list => {
-        try {
-          this.todos = JSON.parse(list);
-        } catch (e) {
-          this.errorMessage = "Unable to load todo list";
-          setTimeout(() => {
-            this.errorMessage = "";
-          }, 3000);
-        }
-      })
-      .catch(error => {
-        this.errorMessage = error;
-        setTimeout(() => {
-          this.errorMessage = "";
-        }, 3000);
-      });
+
+    // 监听来自Go程序的消息
+    Wails.Events.On("error", message => {
+      this.setErrorMessage(message);
+    });
+
+    this.loadList();
   }
 });
 </script>
