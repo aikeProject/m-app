@@ -5,8 +5,9 @@ declare module "*.vue" {
 }
 
 interface Todos {
-  SaveList(string): Promise<string>;
+  SaveList(string: String): Promise<string>;
   LoadList(): Promise<any>;
+  SaveAs(string: String): Promise<any>;
 }
 
 declare interface Window {

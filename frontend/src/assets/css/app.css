@@ -238,7 +238,8 @@ body {
 }
 
 .todo-list li .destroy:after {
-	content: '×';
+	content: 'x';
+	display: block;
 }
 
 .todo-list li:hover .destroy {

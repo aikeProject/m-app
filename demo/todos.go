@@ -14,6 +14,7 @@ type Todos struct {
 	filename string
 	runtime  *wails.Runtime
 	logger   *wails.CustomLogger
+	watcher  *fsnotify.Watcher
 }
 
 // NewTodos attempts to create a new Todo list
@@ -36,13 +37,29 @@ func (t *Todos) LoadList() (string, error) {
 // 保存列表
 func (t *Todos) SaveList(todos string) error {
 	t.logger.Infof("保存的数据为：%s", todos)
-	return ioutil.WriteFile(t.filename, []byte(todos), 0600)
+	return t.saveListByName(todos, t.filename)
+}
+
+// 保存
+func (t *Todos) SaveAs(todos string) error {
+	filename := t.runtime.Dialog.SelectSaveFile()
+	t.logger.Info("Save As: " + filename)
+	err := t.saveListByName(todos, filename)
+	if err != nil {
+		return err
+	}
+	return t.setFilename(filename)
+}
+
+func (t *Todos) saveListByName(todos string, filename string) error {
+	return ioutil.WriteFile(filename, []byte(todos), 0600)
 }
 
 // 监听文件变化
-func (t Todos) startWatcher() error {
+func (t *Todos) startWatcher() error {
 	t.logger.Infof("开始监听...")
 	watcher, err := fsnotify.NewWatcher()
+	t.watcher = watcher
 	if err != nil {
 		return err
 	}
@@ -72,6 +89,29 @@ func (t Todos) startWatcher() error {
 	return nil
 }
 
+func (t *Todos) setFilename(filename string) error {
+	var err error
+	t.logger.Infof("old filename %s", t.filename)
+	t.logger.Infof("new filename %s", filename)
+	// Stop watching the current file and return any error
+	err = t.watcher.Remove(t.filename)
+	if err != nil {
+		return err
+	}
+
+	// Set the filename
+	t.filename = filename
+
+	// Add the new file to the watcher and return any errors
+	err = t.watcher.Add(filename)
+	if err != nil {
+		return err
+	}
+	t.logger.Info("Now watching: " + filename)
+	t.runtime.Window.SetTitle(t.filename)
+	return nil
+}
+
 // 文件不存在则创建一个
 func (t *Todos) ensureFileExists() {
 	// Check status of file
@@ -98,7 +138,7 @@ func (t *Todos) WailsInit(runtime *wails.Runtime) error {
 		return err
 	}
 	t.filename = path.Join(homedir, "Desktop/todos.json")
-
+	t.runtime.Window.SetTitle(t.filename)
 	t.ensureFileExists()
 	return t.startWatcher()
 }

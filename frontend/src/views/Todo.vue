@@ -132,7 +132,7 @@ export default defineComponent({
       todo.title = this.beforeEditCache;
     },
     saveAs: function() {
-      this.setErrorMessage("Saving As...");
+      window.backend.Todos.SaveAs(JSON.stringify(this.todos, null, 2));
     },
     setErrorMessage(message: string) {
       this.errorMessage = message;
