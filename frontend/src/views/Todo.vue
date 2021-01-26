@@ -121,6 +121,14 @@ export default defineComponent({
     }
   },
   mounted() {
+    // 监听来自Go程序的消息
+    Wails.Events.On("error", message => {
+      this.errorMessage = message;
+      setTimeout(() => {
+        this.errorMessage = "";
+      }, 3000);
+    });
+    // 调用Go程序提供的方法
     window.backend.Todos.LoadList()
       .then(list => {
         try {
@@ -144,11 +152,11 @@ export default defineComponent({
 
 <style scoped lang="stylus">
 h2
-  text-align: center;
-  color: white;
-  background-color: red;
-  min-width: 230px;
-  max-width: 550px;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  text-align center
+  color white
+  background-color red
+  min-width 230px
+  max-width 550px
+  padding 1rem
+  border-radius 0.5rem
 </style>
