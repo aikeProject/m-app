@@ -4,8 +4,14 @@ declare module "*.vue" {
   export default component;
 }
 
-namespace backend {
-  function basic(): Promise<string>;
-  function saveList(string): Promise<string>;
-  function loadList(): Promise<any>;
+interface Todos {
+  SaveList(string): Promise<string>;
+  LoadList(): Promise<any>;
+}
+
+declare interface Window {
+  backend: {
+    basic(): Promise<string>;
+    Todos: Todos;
+  };
 }

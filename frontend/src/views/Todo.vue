@@ -75,7 +75,7 @@ export default defineComponent({
       handler(todos) {
         // 打印日志
         Wails.Log.Info("Todo List: " + JSON.stringify(todos));
-        window.backend.saveList(JSON.stringify(todos));
+        window.backend.Todos.SaveList(JSON.stringify(todos, null, 2));
       },
       deep: true
     }
@@ -121,8 +121,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    window.backend
-      .loadList()
+    window.backend.Todos.LoadList()
       .then(list => {
         try {
           this.todos = JSON.parse(list);
