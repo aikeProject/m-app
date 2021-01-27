@@ -5,16 +5,14 @@
       <header class="header">
         <h1>todos</h1>
         <div class="buttons">
-          <div class="buttons">
-            <ul class="filters">
-              <li>
-                <a @click="saveAs">Save As</a>
-              </li>
-              <li>
-                <a @click="loadNewList">Load</a>
-              </li>
-            </ul>
-          </div>
+          <ul class="filters">
+            <li>
+              <a @click="saveAs">Save As</a>
+            </li>
+            <li>
+              <a @click="loadNewList">Load</a>
+            </li>
+          </ul>
         </div>
         <input
           class="new-todo"
@@ -191,7 +189,6 @@ h2
   border-radius 0.5rem
 
 .buttons {
-  height: 20px;
   padding: 10px 20px;
   box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -204,18 +201,5 @@ h2
 
 .buttons li {
   border-color: rgba(175, 47, 47, 0.1);
-}
-
-.filters li a {
-  color: inherit;
-  margin: 3px;
-  padding: 3px 7px;
-  text-decoration: none;
-  border: 1px solid rgba(100, 100, 100, 0.1);
-  border-radius: 3px;
-}
-.filters li a:hover {
-  border-color: rgba(255, 47, 47, 0.3);
-  cursor: pointer;
 }
 </style>

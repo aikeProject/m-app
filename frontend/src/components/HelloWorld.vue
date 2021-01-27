@@ -1,6 +1,7 @@
 <template>
   <div class="hello container">
     <h1>{{ msg }}</h1>
+    <input type="file" @change="processFile" />
   </div>
 </template>
 
@@ -11,6 +12,31 @@ export default defineComponent({
   name: "HelloWorld",
   props: {
     msg: String
+  },
+  methods: {
+    processFile(e: InputEvent) {
+      const target = e.target as HTMLInputElement;
+      const file = target.files ? target.files[0] : null;
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          // base64
+          console.log(reader.result);
+          if (reader.result) {
+            window.backend.HandleFile(
+              JSON.stringify({
+                data: (reader.result as string).split(",")[1],
+                name: file.name,
+                type: file.type
+              })
+            );
+          }
+        };
+        // reader.readAsBinaryString(file);
+        reader.readAsDataURL(file);
+        // reader.readAsArrayBuffer(file);
+      }
+    }
   }
 });
 </script>

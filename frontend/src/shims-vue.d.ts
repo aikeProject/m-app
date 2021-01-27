@@ -15,5 +15,6 @@ declare interface Window {
   backend: {
     basic(): Promise<string>;
     Todos: Todos;
+    HandleFile(string: string): Promise<string>;
   };
 }
