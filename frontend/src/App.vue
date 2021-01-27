@@ -2,7 +2,7 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">
-        <button>Home</button>
+        <el-button>Home</el-button>
       </router-link>
       <router-link to="/about">
         <el-button>About</el-button>
@@ -15,4 +15,7 @@
   </div>
 </template>
 
-<style lang="stylus"></style>
+<style lang="stylus">
+button:focus
+  outline: none!important
+</style>
