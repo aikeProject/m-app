@@ -1,8 +1,8 @@
 <template>
-  <div id="app">
+  <div id="app" class="bg-red-800">
     <div id="nav">
       <router-link to="/">
-        <el-button>Home</el-button>
+        <button>Home</button>
       </router-link>
       <router-link to="/about">
         <el-button>About</el-button>
