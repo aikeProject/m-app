@@ -15,7 +15,7 @@ function RunApp() {
   app.mount("#app");
 }
 
-if (process.env.NO_WAILS) {
+if (process.env.VUE_APP_NO_WAILS) {
   RunApp();
 } else {
   Wails.Init(() => {
