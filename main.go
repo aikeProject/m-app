@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/leaanthony/mewn"
-	"github.com/wailsapp/wails"
 	"log"
 	"magick-app/demo"
+	"magick-app/lib/image"
+
+	"github.com/leaanthony/mewn"
+	"github.com/wailsapp/wails"
 )
 
 func basic() string {
@@ -33,5 +35,6 @@ func main() {
 	})
 	app.Bind(basic)
 	app.Bind(myTodoList)
+	app.Bind(image.HandleFile)
 	app.Run()
 }
