@@ -5,6 +5,8 @@ import * as Wails from "@wailsapp/runtime";
 import installElementPlus from "plugins/element";
 import "assets/css/base.css";
 import "assets/css/app.css";
+import "assets/css/tailwind.css";
+import "assets/css/main.css";
 
 Wails.Init(() => {
   const app = createApp(App);

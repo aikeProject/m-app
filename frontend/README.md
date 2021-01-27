@@ -1,35 +1,9 @@
-# vue basic
-
-## Project setup
+## vue-cli-plugin-tailwind
 
 ```
-npm install
+https://tailwindcss.com/docs/guides/vue-3-vite
 ```
 
-### Compiles and hot-reloads for development
-
 ```
-npm run serve
+vue add tailwind
 ```
-
-### Compiles and minifies for production
-
-```
-npm run build
-```
-
-### Run your tests
-
-```
-npm run test
-```
-
-### Lints and fixes files
-
-```
-npm run lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
