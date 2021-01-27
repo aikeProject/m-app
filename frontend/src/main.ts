@@ -8,9 +8,17 @@ import "assets/css/app.css";
 import "assets/css/tailwind.css";
 import "assets/css/main.css";
 
-Wails.Init(() => {
+function RunApp() {
   const app = createApp(App);
   installElementPlus(app);
   app.use(router);
   app.mount("#app");
-});
+}
+
+if (process.env.NO_WAILS) {
+  RunApp();
+} else {
+  Wails.Init(() => {
+    RunApp();
+  });
+}
