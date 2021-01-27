@@ -21,6 +21,7 @@
         <p class="text-gray-500">You have a new message!</p>
       </div>
     </div>
+    <div class="h-4"></div>
     <div
       class="py-8 px-8 max-w-sm mx-auto bg-white rounded-xl shadow-md space-y-2 sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6"
     >
@@ -53,6 +54,36 @@
     <button class="btn btn-green">
       Button
     </button>
+    <div
+      class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl"
+    >
+      <div class="md:flex">
+        <div class="md:flex-shrink-0">
+          <img
+            class="h-48 w-full object-cover md:w-48"
+            src="../assets/appicon.png"
+            alt=""
+          />
+        </div>
+        <div class="p-8">
+          <div
+            class="uppercase tracking-wide text-sm text-indigo-500 font-semibold"
+          >
+            Case study
+          </div>
+          <a
+            href="#"
+            class="block mt-1 text-lg leading-tight font-medium text-black hover:underline"
+          >
+            床前明月光，疑似地上霜。举头望明月，低头思故乡
+          </a>
+          <p class="mt-2 text-gray-500">
+            Getting a new business off the ground is a lot of hard work. Here
+            are five ideas you can use to find your first customers.
+          </p>
+        </div>
+      </div>
+    </div>
     <HelloWorld :msg="message" />
   </div>
 </template>
