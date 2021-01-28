@@ -18,7 +18,5 @@ function RunApp() {
 if (process.env.VUE_APP_NO_WAILS) {
   RunApp();
 } else {
-  Wails.Init(() => {
-    RunApp();
-  });
+  Wails.Init(RunApp);
 }

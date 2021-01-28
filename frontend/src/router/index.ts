@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import { createRouter, createMemoryHistory, RouteRecordRaw } from "vue-router";
 import Home from "views/Home.vue";
 import About from "views/About.vue";
 import Todo from "views/Todo.vue";
@@ -26,7 +26,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createMemoryHistory(),
   routes
 });
 
