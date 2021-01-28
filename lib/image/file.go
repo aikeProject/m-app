@@ -4,6 +4,7 @@ import (
 	"image"
 	"io/ioutil"
 	"magick-app/lib/webp"
+	"path"
 )
 
 type File struct {
@@ -15,12 +16,13 @@ type File struct {
 }
 
 // jpeg/png => webp
-func (f *File) Write() error {
+func (f *File) Write(dir string) error {
 	buf, err := webp.EncodeWebp(f.Image)
+	dest := path.Join(dir, f.Name+".webp")
 	if err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile("convert/"+f.Name+".webp", buf.Bytes(), 0666); err != nil {
+	if err := ioutil.WriteFile(dest, buf.Bytes(), 0666); err != nil {
 		return err
 	}
 	return nil

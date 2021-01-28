@@ -13,12 +13,15 @@ import (
 
 type FileManager struct {
 	Files   []*File
+	OurDir  string
 	Runtime *wails.Runtime
 	Logger  *wails.CustomLogger
 }
 
 func NewFileManager() *FileManager {
-	return &FileManager{}
+	return &FileManager{
+		OurDir: "./",
+	}
 }
 
 func (m *FileManager) WailsInit(runtime *wails.Runtime) error {
@@ -62,7 +65,7 @@ func (m FileManager) Convert() (errs []error) {
 	for _, file := range m.Files {
 		f := file
 		go func(w *sync.WaitGroup) {
-			if err := f.Write(); err != nil {
+			if err := f.Write(m.OurDir); err != nil {
 				m.Logger.Error(fmt.Sprintf("文件转换失败: %s", f.Name))
 				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
 			}
@@ -73,4 +76,11 @@ func (m FileManager) Convert() (errs []error) {
 	wg.Wait()
 
 	return errs
+}
+
+// 选择文件保存位置
+func (m FileManager) SetOutDir() string {
+	dir := m.Runtime.Dialog.SelectDirectory()
+	m.OurDir = dir
+	return m.OurDir
 }
