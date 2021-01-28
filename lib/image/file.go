@@ -8,6 +8,7 @@ import (
 
 type File struct {
 	Data    []byte `json:"data"`
+	Ext     string `json:"ext"`
 	MimeTye string `json:"type"`
 	Name    string `json:"name"`
 	Image   image.Image

@@ -8,6 +8,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { fExt, fName } from "lib/filw";
 
 export default defineComponent({
   name: "HelloWorld",
@@ -31,10 +32,12 @@ export default defineComponent({
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
+          const name = file.name;
           window.backend.FileManager.HandleFile(
             JSON.stringify({
               data: (reader.result as string).split(",")[1],
-              name: file.name,
+              ext: fExt(name),
+              name: fName(name),
               type: file.type
             })
           );
