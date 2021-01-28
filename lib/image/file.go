@@ -19,7 +19,7 @@ func (f *File) Write() error {
 	if err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(f.Name+".webp", buf.Bytes(), 0666); err != nil {
+	if err := ioutil.WriteFile("convert/"+f.Name+".webp", buf.Bytes(), 0666); err != nil {
 		return err
 	}
 	return nil

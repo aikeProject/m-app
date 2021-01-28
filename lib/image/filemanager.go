@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image/jpeg"
 	"image/png"
+	"sync"
 
 	"github.com/wailsapp/wails"
 )
@@ -54,13 +55,22 @@ func (m *FileManager) HandleFile(fileJson string) (err error) {
 }
 
 // 格式转换
-func (m FileManager) Convert() error {
+func (m FileManager) Convert() (errs []error) {
+	var wg sync.WaitGroup
+	wg.Add(len(m.Files))
+
 	for _, file := range m.Files {
-		if err := file.Write(); err != nil {
-			m.Logger.Error(fmt.Sprintf("文件转换失败: %s ", file.Name))
-			return err
-		}
-		m.Logger.Infof("转换成功: %s", file.Name)
+		f := file
+		go func(w *sync.WaitGroup) {
+			if err := f.Write(); err != nil {
+				m.Logger.Error(fmt.Sprintf("文件转换失败: %s", f.Name))
+				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
+			}
+			m.Logger.Infof("转换成功: %s", f.Name)
+			w.Done()
+		}(&wg)
 	}
-	return nil
+	wg.Wait()
+
+	return errs
 }
