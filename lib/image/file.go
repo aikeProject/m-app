@@ -19,6 +19,7 @@ type File struct {
 func (f *File) Write(dir string) error {
 	buf, err := webp.EncodeWebp(f.Image)
 	dest := path.Join(dir, f.Name+".webp")
+
 	if err != nil {
 		return err
 	}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image/jpeg"
 	"image/png"
+	"path"
 	"sync"
 
 	"github.com/wailsapp/wails"
@@ -58,7 +59,7 @@ func (m *FileManager) HandleFile(fileJson string) (err error) {
 }
 
 // 格式转换
-func (m FileManager) Convert() (errs []error) {
+func (m *FileManager) Convert() (errs []error) {
 	var wg sync.WaitGroup
 	wg.Add(len(m.Files))
 
@@ -69,7 +70,7 @@ func (m FileManager) Convert() (errs []error) {
 				m.Logger.Error(fmt.Sprintf("文件转换失败: %s", f.Name))
 				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
 			}
-			m.Logger.Infof("转换成功: %s", f.Name)
+			m.Logger.Infof("转换成功: %s", path.Join(m.OurDir, f.Name+".webp"))
 			w.Done()
 		}(&wg)
 	}
@@ -79,8 +80,9 @@ func (m FileManager) Convert() (errs []error) {
 }
 
 // 选择文件保存位置
-func (m FileManager) SetOutDir() string {
+func (m *FileManager) SetOutDir() string {
 	dir := m.Runtime.Dialog.SelectDirectory()
 	m.OurDir = dir
+	m.Logger.Infof("OurDir: %s", dir)
 	return m.OurDir
 }

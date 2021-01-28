@@ -2,6 +2,7 @@
   <div class="hello container">
     <h1>{{ msg }}</h1>
     <el-button @click="convert">Run Covert</el-button>
+    <el-button @click="selectOutDir">Output Directory</el-button>
     <input type="file" multiple @change="processFileInput" />
   </div>
 </template>
@@ -44,6 +45,11 @@ export default defineComponent({
         }
       };
       reader.readAsDataURL(file);
+    },
+    selectOutDir() {
+      window.backend.FileManager.SetOutDir()
+        .then(result => console.log(result))
+        .catch(err => console.error(err));
     }
   }
 });

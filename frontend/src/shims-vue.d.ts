@@ -14,6 +14,7 @@ interface Todos {
 interface FileManager {
   HandleFile(string: string): Promise<string>;
   Convert(): Promise<any>;
+  SetOutDir(): Promise<any>;
 }
 
 declare interface Window {
