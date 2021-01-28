@@ -22,7 +22,7 @@ func HandleFile(fileJson string) (file File, err error) {
 	if err := json.Unmarshal([]byte(fileJson), &file); err != nil {
 		return file, err
 	}
-	if file.MimeTye == "image/jpg" {
+	if file.MimeTye == "image/jpeg" {
 		file.Image, err = jpeg.Decode(bytes.NewReader(file.Data))
 	} else if file.MimeTye == "image/png" {
 		file.Image, err = png.Decode(bytes.NewReader(file.Data))
