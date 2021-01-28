@@ -33,8 +33,11 @@ func main() {
 		CSS:    css,
 		Colour: "#131313",
 	})
+
+	fileManager := image.NewFileManager()
+
 	app.Bind(basic)
 	app.Bind(myTodoList)
-	app.Bind(image.HandleFile)
-	app.Run()
+	app.Bind(fileManager)
+	_ = app.Run()
 }

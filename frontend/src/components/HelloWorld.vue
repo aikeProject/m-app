@@ -1,7 +1,8 @@
 <template>
   <div class="hello container">
     <h1>{{ msg }}</h1>
-    <input type="file" @change="processFile" />
+    <el-button @click="convert">Run Covert</el-button>
+    <input type="file" multiple @change="processFileInput" />
   </div>
 </template>
 
@@ -14,28 +15,32 @@ export default defineComponent({
     msg: String
   },
   methods: {
-    processFile(e: InputEvent) {
+    convert() {
+      window.backend.FileManager.Convert()
+        .then(result => {
+          console.log(result);
+        })
+        .catch(error => console.error(error));
+    },
+    processFileInput(e: InputEvent) {
       const target = e.target as HTMLInputElement;
-      const file = target.files ? target.files[0] : null;
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          // base64
-          console.log(reader.result);
-          if (reader.result) {
-            window.backend.HandleFile(
-              JSON.stringify({
-                data: (reader.result as string).split(",")[1],
-                name: file.name,
-                type: file.type
-              })
-            );
-          }
-        };
-        // reader.readAsBinaryString(file);
-        reader.readAsDataURL(file);
-        // reader.readAsArrayBuffer(file);
-      }
+      const files = target.files ? [].slice.apply(target.files) : [];
+      files.forEach(f => this.processFile(f));
+    },
+    processFile(file: File) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          window.backend.FileManager.HandleFile(
+            JSON.stringify({
+              data: (reader.result as string).split(",")[1],
+              name: file.name,
+              type: file.type
+            })
+          );
+        }
+      };
+      reader.readAsDataURL(file);
     }
   }
 });

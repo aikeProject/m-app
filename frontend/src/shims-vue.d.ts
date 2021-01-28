@@ -11,10 +11,15 @@ interface Todos {
   LoadNewList(): Promise<string>;
 }
 
+interface FileManager {
+  HandleFile(string: string): Promise<string>;
+  Convert(): Promise<any>;
+}
+
 declare interface Window {
   backend: {
     basic(): Promise<string>;
     Todos: Todos;
-    HandleFile(string: string): Promise<string>;
+    FileManager: FileManager;
   };
 }
