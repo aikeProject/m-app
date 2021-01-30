@@ -4,7 +4,8 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, onMounted } from "vue";
+import { useStore } from "vuex";
 import Editor from "@/components/Editor.vue";
 import Sidebar from "components/Sidebar.vue";
 import Settings from "components/Settings.vue";
@@ -19,6 +20,7 @@ export default defineComponent({
     About
   },
   setup() {
+    const store = useStore();
     const currentView = ref("Editor");
 
     const handleViewClose = () => {
@@ -29,10 +31,11 @@ export default defineComponent({
       currentView.value = e;
     };
 
+    onMounted(() => {
+      store.dispatch("getConfig");
+    });
+
     return { currentView, handleViewClose, handleViewSelect };
-  },
-  mounted() {
-    this.$store.dispatch("getConfig");
   }
 });
 </script>
