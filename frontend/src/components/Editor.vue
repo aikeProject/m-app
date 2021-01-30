@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-full p-10">
+  <div class="w-full p-10">
     <header class="border-b-2 border-gray-800 flex">
       <div class="w-1/2">
         <div
@@ -34,19 +34,19 @@
             @click="convert"
             :disabled="!canConvert"
           >
-            Optimize
+            转换格式
           </button>
           <button
             class="bg-purple-default border-0 flex py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
             @click="clear"
           >
-            Clear
+            清除
           </button>
         </section>
       </div>
       <div class="w-1/2">
         <div class="flex h-full items-center justify-center">
-          <h2 class="leading-none text-4xl text-center text-green">
+          <h2 class="leading-none text-4xl text-center text-green-default">
             Add image files<br />to get started
           </h2>
         </div>
@@ -68,7 +68,7 @@
       <option value="png">PNG</option>
     </select>
     <button
-      class="flex ml-auto bg-purple border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
+      class="flex ml-auto bg-purple-default border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
       @click="selectOutDir"
     >
       保存目录
