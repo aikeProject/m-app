@@ -33,7 +33,7 @@ func NewConfig() *Config {
 	return c
 }
 
-func (c Config) WailsInit(runtime *wails.Runtime) error {
+func (c *Config) WailsInit(runtime *wails.Runtime) error {
 	c.Runtime = runtime
 	c.Logger = c.Runtime.Log.New("Config")
 	c.Logger.Info("Config 初始化...")
@@ -41,7 +41,7 @@ func (c Config) WailsInit(runtime *wails.Runtime) error {
 }
 
 // 打开对话框，选择输出目录
-func (c Config) SetOutDir() string {
+func (c *Config) SetOutDir() string {
 	dir := c.Runtime.Dialog.SelectDirectory()
 	c.OutDir = dir
 	return c.OutDir
