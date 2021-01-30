@@ -56,7 +56,7 @@ func (m *FileManager) Convert() (errs []error) {
 	for _, file := range m.Files {
 		f := file
 		go func(w *sync.WaitGroup) {
-			err := f.Write(m.Config.OutDir)
+			err := f.Write(m.Config.OutDir, m.Config.Target)
 			if err != nil {
 				m.Logger.Error(fmt.Sprintf("文件转换失败: %s, %v", f.Name, err))
 				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))

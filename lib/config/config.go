@@ -11,6 +11,7 @@ import (
 // 应用程序配置
 type Config struct {
 	OutDir  string
+	Target  string
 	Runtime *wails.Runtime
 	Logger  *wails.CustomLogger
 }
@@ -30,6 +31,7 @@ func NewConfig() *Config {
 		}
 	}
 	c.OutDir = od
+	c.Target = "webp"
 	return c
 }
 
@@ -44,5 +46,12 @@ func (c *Config) WailsInit(runtime *wails.Runtime) error {
 func (c *Config) SetOutDir() string {
 	dir := c.Runtime.Dialog.SelectDirectory()
 	c.OutDir = dir
+	c.Logger.Infof("输出目录: %s", dir)
 	return c.OutDir
+}
+
+// 文件转换的目标类型
+func (c *Config) setTarget(t string) {
+	c.Target = t
+	c.Logger.Infof("文件转换类型: %s", t)
 }
