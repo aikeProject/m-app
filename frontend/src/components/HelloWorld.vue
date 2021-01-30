@@ -34,6 +34,16 @@
               大小
             </th>
             <th
+              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+            >
+              转换后大小
+            </th>
+            <th
+              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+            >
+              转化率
+            </th>
+            <th
               class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200"
             >
               完成
@@ -43,7 +53,11 @@
         <tbody>
           <tr v-for="(file, i) in files" :key="`${i}-${file.name}`">
             <td class="px-4 py-3">{{ file.filename }}</td>
-            <td class="font-mono px-4 py-3">{{ file.size }}</td>
+            <td class="font-mono px-4 py-3">{{ getPrettySize(file.size) }}</td>
+            <td class="font-mono px-4 py-3">
+              {{ getPrettySize(file.convertedSize) }}
+            </td>
+            <td class="px-4 py-3">{{ getSavings(file) }}</td>
             <td class="px-4 py-3">{{ file.isConverted }}</td>
           </tr>
         </tbody>
@@ -85,20 +99,46 @@ export default defineComponent({
         .catch(error => console.error(error));
     },
     /**
-     * 通过文件名查找文件
+     * 根据文件名和大小创建文件id
      * @param name
+     * @param size
      */
-    getFileByName(name: string) {
+    createFileId(name: string, size: number): string {
+      return name + size.toString();
+    },
+    /**
+     * 通过文件名查找文件
+     * @param id
+     */
+    getFileById(id: string) {
       if (this.files.length === 0) return;
-      return this.files.find(f => f.name === name);
+      return this.files.find(f => f.id === id);
+    },
+    /**
+     * 转换文件大小的格式
+     * @param size
+     */
+    getPrettySize(size: number) {
+      if (size === 0) return "";
+      return fSize(size);
+    },
+    /**
+     * 转换率
+     * => 转换后大小/原文件大小
+     * @param file {CFile}
+     */
+    getSavings(file: CFile) {
+      if (file.convertedSize === 0) return "";
+      const p = Math.floor(100 - (file.convertedSize / file.size) * 100);
+      return `${p.toString()}%`;
     },
     /**
      * 文件是否存在
-     * @param name}
+     * @param id
      */
-    hasFile(name: string): boolean {
+    hasFile(id: string): boolean {
       if (this.files.length === 0) return false;
-      return this.files.some(f => f.name === name);
+      return this.files.some(f => f.id === id);
     },
     /**
      * 检查文件类型
@@ -113,23 +153,28 @@ export default defineComponent({
       const files: File[] = target.files ? [].slice.apply(target.files) : [];
       files.forEach(f => {
         const name = fName(f.name);
+        const size = f.size;
+        const id = this.createFileId(name, size);
         if (!this.isValidType(f.type) || this.hasFile(name)) return;
-        this.processFile(f);
+        this.processFile(f, id);
         this.files.push({
+          id,
+          name,
+          size,
           filename: f.name,
           isConverted: false,
-          name: fName(f.name),
-          size: fSize(f.size)
+          convertedSize: 0
         });
       });
     },
-    processFile(file: File) {
+    processFile(file: File, id: string) {
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
           const name = file.name;
           window.backend.FileManager.HandleFile(
             JSON.stringify({
+              id,
               data: (reader.result as string).split(",")[1],
               ext: fExt(name),
               name: fName(name),
@@ -147,10 +192,11 @@ export default defineComponent({
     }
   },
   mounted() {
-    Wails.Events.On("conversion:complete", name => {
-      const f = this.getFileByName(name);
+    Wails.Events.On("conversion:complete", e => {
+      const f = this.getFileById(e.id);
       if (!f) return;
       f.isConverted = true;
+      f.convertedSize = e.size;
     });
   }
 });

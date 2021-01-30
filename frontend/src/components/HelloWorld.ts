@@ -5,8 +5,10 @@
  */
 
 export interface CFile {
+  id: string;
   filename: string;
   isConverted: boolean;
   name: string;
-  size: string;
+  size: number;
+  convertedSize: 0;
 }

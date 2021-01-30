@@ -67,13 +67,22 @@ func (m *FileManager) Convert() (errs []error) {
 	for _, file := range m.Files {
 		f := file
 		go func(w *sync.WaitGroup) {
-			if err := f.Write(m.Config.OutDir); err != nil {
+			err := f.Write(m.Config.OutDir)
+			if err != nil {
 				m.Logger.Error(fmt.Sprintf("文件转换失败: %s, %v", f.Name, err))
 				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
+			} else {
+				f.IsConverted = true
+				m.Logger.Infof("转换成功: %s", path.Join(m.Config.OutDir, f.Name+".webp"))
+				s, err := f.GetConvertedSize()
+				if err != nil {
+					m.Logger.Errorf("获取不到转换文件大小：%v", err)
+				}
+				m.Runtime.Events.Emit("conversion:complete", map[string]interface{}{
+					"id":   f.Id,
+					"size": s,
+				})
 			}
-			f.IsConverted = true
-			m.Logger.Infof("转换成功: %s", path.Join(m.Config.OutDir, f.Name+".webp"))
-			m.Runtime.Events.Emit("conversion:complete", f.Name)
 			w.Done()
 		}(&wg)
 	}
