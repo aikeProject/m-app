@@ -1,6 +1,9 @@
 <template>
   <nav class="flex flex-col items-center pl-10 pt-10 w-24">
-    <div class="border-2 border-gray-700 p-2 rounded-full w-10 h-10">
+    <div
+      @click="selectView('Settings')"
+      class="border-2 border-gray-700 p-2 rounded-full w-10 h-10"
+    >
       <svg
         version="1.1"
         id="cog"
@@ -24,6 +27,7 @@
       </svg>
     </div>
     <div
+      @click="selectView('About')"
       class="border-2 border-gray-700 flex h-8 items-center justify-center mt-4 p-2 rounded-full text-center w-8"
     >
       <p class="font-bold">i</p>
@@ -33,7 +37,12 @@
 
 <script>
 export default {
-  name: "Sidebar"
+  name: "Sidebar",
+  methods: {
+    selectView(v) {
+      this.$emit("select-view", v);
+    }
+  }
 };
 </script>
 

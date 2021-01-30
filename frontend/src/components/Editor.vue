@@ -350,6 +350,7 @@ export default defineComponent({
      */
     clear() {
       this.files = [];
+      // eslint-disable-next-line
       // this.$refs["fileInput"].value = "";
       window.backend.Config.Clear()
         .then(console.log)
