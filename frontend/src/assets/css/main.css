@@ -3,6 +3,28 @@
     font-family: 'Roboto', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color: #eee;
+}
+
+* {
+    user-select: none;
+}
+
+html {
+    background-color: #131313;
+    background-size: 20px 20px;
+    overflow: hidden;
+    height: 100%;
+}
+
+body {
+    scrollbar-base-color: #000;
+    scrollbar-face-color: #fff;
+    scrollbar-3dlight-color: #000;
+    scrollbar-highlight-color: #000;
+    scrollbar-track-color: #000;
+    scrollbar-arrow-color: #000;
+    scrollbar-shadow-color: #fff;
 }
 
 /* roboto-regular - latin */

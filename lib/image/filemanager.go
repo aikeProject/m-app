@@ -61,7 +61,7 @@ func (m *FileManager) HandleFile(fileJson string) (err error) {
 // 格式转换
 func (m *FileManager) Convert() (errs []error) {
 	var wg sync.WaitGroup
-	wg.Add(len(m.Files))
+	wg.Add(m.CountUnconverted())
 
 	for _, file := range m.Files {
 		f := file
@@ -70,6 +70,7 @@ func (m *FileManager) Convert() (errs []error) {
 				m.Logger.Error(fmt.Sprintf("文件转换失败: %s", f.Name))
 				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
 			}
+			f.IsConverted = true
 			m.Logger.Infof("转换成功: %s", path.Join(m.OurDir, f.Name+".webp"))
 			w.Done()
 		}(&wg)
@@ -77,6 +78,17 @@ func (m *FileManager) Convert() (errs []error) {
 	wg.Wait()
 
 	return errs
+}
+
+// 统计未完成转换的文件
+func (m *FileManager) CountUnconverted() int {
+	c := 0
+	for _, file := range m.Files {
+		if !file.IsConverted {
+			c++
+		}
+	}
+	return c
 }
 
 // 选择文件保存位置

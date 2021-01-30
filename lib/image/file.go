@@ -8,11 +8,12 @@ import (
 )
 
 type File struct {
-	Data    []byte `json:"data"`
-	Ext     string `json:"ext"`
-	MimeTye string `json:"type"`
-	Name    string `json:"name"`
-	Image   image.Image
+	Data        []byte `json:"data"`
+	Ext         string `json:"ext"`
+	MimeTye     string `json:"type"`
+	Name        string `json:"name"`
+	IsConverted bool
+	Image       image.Image
 }
 
 // jpeg/png => webp
