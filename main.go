@@ -27,12 +27,13 @@ func main() {
 	}
 
 	app := wails.CreateApp(&wails.AppConfig{
-		Width:  1024,
-		Height: 768,
-		Title:  "magick-app",
-		JS:     js,
-		CSS:    css,
-		Colour: "#131313",
+		Width:     1024,
+		Height:    576,
+		Title:     "magick-app",
+		JS:        js,
+		CSS:       css,
+		Colour:    "#131313",
+		Resizable: true,
 	})
 	newConfig := config.NewConfig()
 	fileManager := image.NewFileManager(newConfig)

@@ -1,7 +1,7 @@
 <template>
   <div class="mx-auto p-10">
-    {{ config.outDir }}
-    {{ config.target }}
+    <p @click="openDir">{{ config.outDir }}</p>
+    <p>{{ config.target }}</p>
     <input
       type="file"
       accept="image/jpeg, image/png, image/jpg, image/webp"
@@ -229,6 +229,12 @@ export default defineComponent({
         .catch(err => {
           console.error(err);
         });
+    },
+    // 打开文件输出目录
+    openDir() {
+      window.backend.Config.OpenOutputDir()
+        .then(res => console.log(res))
+        .catch(err => console.error(err));
     }
   },
   mounted() {

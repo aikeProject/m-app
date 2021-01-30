@@ -63,6 +63,14 @@ func (c *Config) SetOutDir() string {
 	return c.OutDir
 }
 
+// 打开输出目录
+func (c Config) OpenOutputDir() error {
+	if err := c.Runtime.Browser.OpenURL(c.OutDir); err != nil {
+		return err
+	}
+	return nil
+}
+
 // 文件转换的目标类型
 func (c *Config) setTarget(t string) {
 	c.Target = t
