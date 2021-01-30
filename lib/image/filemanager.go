@@ -1,11 +1,8 @@
 package image
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"image/jpeg"
-	"image/png"
 	"magick-app/lib/config"
 	"path"
 	"sync"
@@ -42,19 +39,11 @@ func (m *FileManager) HandleFile(fileJson string) (err error) {
 		return err
 	}
 
-	if file.MimeTye == "image/jpeg" || file.MimeTye == "image/jpg" {
-		file.Image, err = jpeg.Decode(bytes.NewReader(file.Data))
-		m.Files = append(m.Files, file)
-		m.Logger.Infof("添加文件到管理器：%s", file.Name)
-	} else if file.MimeTye == "image/png" {
-		file.Image, err = png.Decode(bytes.NewReader(file.Data))
-		m.Files = append(m.Files, file)
-		m.Logger.Infof("添加文件到管理器：%s", file.Name)
-	}
-
-	if err != nil {
+	if err := file.Decode(); err != nil {
 		return err
 	}
+	m.Files = append(m.Files, file)
+	m.Logger.Infof("添加到文件管理器: %s, type: %s", file.Name, file.MimeTye)
 
 	return nil
 }

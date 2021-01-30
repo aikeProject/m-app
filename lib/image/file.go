@@ -1,8 +1,11 @@
 package image
 
 import (
+	"bytes"
 	"errors"
 	"image"
+	"image/jpeg"
+	"image/png"
 	"io/ioutil"
 	"magick-app/lib/webp"
 	"os"
@@ -20,8 +23,44 @@ type File struct {
 	Image         image.Image
 }
 
+var mimes = map[string]string{
+	"image/.jpg": "jpg",
+	"image/jpg":  "jpg",
+	"image/jpeg": "jpg",
+	"image/png":  "png",
+	"image/webp": "webp",
+}
+
+// 返回文件类型
+func getFileType(t string) (string, error) {
+	s, prs := mimes[t]
+	if !prs {
+		_ = errors.New("不持之的文件类型:" + t)
+	}
+	return s, nil
+}
+
+// 根据不同文件类型进行解析
+func (f *File) Decode() error {
+	fileType, err := getFileType(f.MimeTye)
+	if err != nil {
+		return err
+	}
+
+	switch fileType {
+	case "jpg":
+		f.Image, err = jpeg.Decode(bytes.NewReader(f.Data))
+	case "png":
+		f.Image, err = png.Decode(bytes.NewReader(f.Data))
+	case "webp":
+		f.Image, err = webp.DecodeWebp(bytes.NewReader(f.Data))
+	}
+
+	return nil
+}
+
 // 返回已转换文件的大小
-func (f File) GetConvertedSize() (int64, error) {
+func (f *File) GetConvertedSize() (int64, error) {
 	if f.ConvertedFile == "" {
 		return 0, errors.New("文件没有对应的转换后的文件")
 	}

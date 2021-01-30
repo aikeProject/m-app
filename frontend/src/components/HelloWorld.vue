@@ -2,7 +2,7 @@
   <div class="mx-auto p-10">
     <input
       type="file"
-      accept="image/jpeg, image/png, image/jpg"
+      accept="image/jpeg, image/png, image/jpg, image/webp"
       multiple
       @change="processFileInput"
     />
@@ -145,7 +145,13 @@ export default defineComponent({
      * @param type
      */
     isValidType(type: string): boolean {
-      const v = ["image/png", "image/jpeg", "image/jpeg"];
+      const v = [
+        "image/png",
+        "image/.jpg",
+        "image/jpg",
+        "image/jpeg",
+        "image/webp"
+      ];
       return v.indexOf(type) >= 0;
     },
     processFileInput(e: InputEvent) {
