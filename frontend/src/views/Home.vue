@@ -1,5 +1,6 @@
 <template>
   <div class="bg-gray-800">
+    <Sidebar />
     <Editor />
   </div>
 </template>
@@ -7,11 +8,13 @@
 <script lang="ts">
 import { ref, defineComponent } from "vue";
 import Editor from "@/components/Editor.vue"; // @ is an alias to /src
+import Sidebar from "components/Sidebar.vue";
 
 export default defineComponent({
   name: "Home",
   components: {
-    Editor
+    Editor,
+    Sidebar
   },
   setup() {
     const message = ref("Click the Icon");

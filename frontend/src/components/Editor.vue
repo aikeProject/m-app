@@ -1,5 +1,57 @@
 <template>
-  <div class="mx-auto p-10">
+  <div class="mx-full p-10">
+    <header class="border-b-2 border-gray-800 flex">
+      <div class="w-1/2">
+        <div
+          class="bg-gray-800 flex flex-col items-center justify-center py-10"
+          ref="dropZone"
+        >
+          <svg
+            version="1.1"
+            id="dropZone-plus"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            x="0px"
+            y="0px"
+            viewBox="0 0 48 48"
+            enable-background="new 0 0 48 48"
+            width="48px"
+            height="48px"
+            xml:space="preserve"
+          >
+            <path
+              fill="#808080"
+              d="M47,20.6H28.4c-0.6,0-1-0.4-1-1V1c0-0.6-0.4-1-1-1h-4.9c-0.6,0-1,0.4-1,1v18.6c0,0.6-0.4,1-1,1H1
+                c-0.6,0-1,0.4-1,1v4.9c0,0.6,0.4,1,1,1h18.6c0.6,0,1,0.4,1,1V47c0,0.6,0.4,1,1,1h4.9c0.6,0,1-0.4,1-1V28.4c0-0.6,0.4-1,1-1H47
+                c0.6,0,1-0.4,1-1v-4.9C48,21,47.6,20.6,47,20.6z"
+            />
+          </svg>
+          <p class="mt-6 text-gray-200">Drag and drop or select images</p>
+        </div>
+        <section class="flex justify-between py-6 w-full">
+          <button
+            class="bg-purple border-0 flex py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
+            @click="convert"
+            :disabled="!canConvert"
+          >
+            Optimize
+          </button>
+          <button
+            class="bg-purple border-0 flex py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
+            @click="clear"
+          >
+            Clear
+          </button>
+        </section>
+      </div>
+      <div class="w-1/2">
+        <div class="flex h-full items-center justify-center">
+          <h2 class="leading-none text-4xl text-center text-green">
+            Add image files<br />to get started
+          </h2>
+        </div>
+      </div>
+    </header>
     <p @click="openDir">{{ config.outDir }}</p>
     <p>{{ config.target }}</p>
     <input
@@ -16,55 +68,42 @@
       <option value="png">PNG</option>
     </select>
     <button
-      class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+      class="flex ml-auto bg-purple border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
       @click="selectOutDir"
     >
-      选择文件夹
-    </button>
-    <button
-      class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
-      :disabled="!canConvert"
-      @click="convert"
-    >
-      转换
-    </button>
-    <button
-      class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
-      @click="clear"
-    >
-      清空
+      保存目录
     </button>
     <div v-if="files.length > 0" class="table-wrapper">
       <table class="table-auto w-full text-left whitespace-nowrap">
         <thead>
           <tr>
             <th
-              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
+              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
               文件名
             </th>
             <th
-              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
+              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
               大小
             </th>
             <th
-              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
+              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
               转换后大小
             </th>
             <th
-              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
+              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
               转化率
             </th>
             <th
-              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
+              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
               结果
             </th>
             <th
-              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
+              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
               完成
             </th>
@@ -73,15 +112,41 @@
         <tbody>
           <tr v-for="(file, i) in files" :key="`${i}-${file.name}`">
             <td class="cell-l">{{ file.filename }}</td>
-            <td class="font-mono">{{ getPrettySize(file.size) }}</td>
-            <td class="font-mono">
+            <td>{{ getPrettySize(file.size) }}</td>
+            <td>
               {{ getPrettySize(file.convertedSize) }}
             </td>
             <td>{{ getSavings(file) }}</td>
             <td @click="openFile(file)">
               {{ file.convertedPath }}
             </td>
-            <td class="cell-r">{{ file.isConverted }}</td>
+            <td>
+              <p
+                v-if="file.isConverted"
+                class="flex items-center justify-center"
+              >
+                <svg
+                  version="1.1"
+                  :id="`${i}-check`"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  x="0px"
+                  y="0px"
+                  viewBox="0 0 20 20"
+                  enable-background="new 0 0 20 20"
+                  width="20px"
+                  height="20px"
+                  xml:space="preserve"
+                >
+                  <path
+                    fill="#07FDBC"
+                    d="M10,0C4.5,0,0,4.5,0,10s4.5,10,10,10s10-4.5,10-10S15.5,0,10,0z M8,14.4l-3.7-3.7l1.4-1.4L8,11.6l5.3-5.3
+                            l1.4,1.4L8,14.4z"
+                  />
+                </svg>
+              </p>
+              <p v-else></p>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -306,9 +371,14 @@ export default defineComponent({
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
 .table-wrapper
-  min-height calc(100vh / 5)
-  max-height calc(100vh / 2)
+  min-height 80px
+  /*max-height: calc(100vh / 2);*/
   overflow auto
+  height calc(100vh - 344px)
+
+table tr:nth-child(odd) p
+  @apply bg-gray-800;
+
 
 td
   margin 0

@@ -28,11 +28,11 @@ func main() {
 
 	app := wails.CreateApp(&wails.AppConfig{
 		Width:     1024,
-		Height:    576,
+		Height:    768,
 		Title:     "magick-app",
 		JS:        js,
 		CSS:       css,
-		Colour:    "#131313",
+		Colour:    "#18181f",
 		Resizable: true,
 	})
 	newConfig := config.NewConfig()
