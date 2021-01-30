@@ -1,12 +1,19 @@
 <template>
   <div class="mx-auto p-10">
     {{ config.outDir }}
+    {{ config.target }}
     <input
       type="file"
       accept="image/jpeg, image/png, image/jpg, image/webp"
       multiple
       @change="processFileInput"
     />
+    <label for="target">Target</label>
+    <select class="text-black" name="target" id="target" @change="selectTarget">
+      <option value="webp" selected>WebP</option>
+      <option value="jpg">JPG</option>
+      <option value="png">PNG</option>
+    </select>
     <button
       class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
       @click="selectOutDir"
@@ -199,6 +206,7 @@ export default defineComponent({
       };
       reader.readAsDataURL(file);
     },
+    // 选择输出目录
     selectOutDir() {
       window.backend.Config.SetOutDir()
         .then(result => {
@@ -206,6 +214,21 @@ export default defineComponent({
           this.$store.dispatch("getConfig");
         })
         .catch(err => console.error(err));
+    },
+    /**
+     * 选择转换格式
+     */
+    selectTarget(e: Event) {
+      const target = e.target as HTMLOptionElement;
+      console.log(target);
+      window.backend.Config.SetTarget(target.value)
+        .then(res => {
+          console.log(res);
+          this.$store.dispatch("getConfig");
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   },
   mounted() {
