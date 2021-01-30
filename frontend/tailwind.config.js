@@ -2,7 +2,7 @@ module.exports = {
   purge: { content: ["./public/**/*.html", "./src/**/*.{vue,js,ts,jsx,tsx}"] },
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    // extend: {},
     colors: {
       gray: {
         200: "#b3b3b3",

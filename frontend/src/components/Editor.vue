@@ -30,14 +30,14 @@
         </div>
         <section class="flex justify-between py-6 w-full">
           <button
-            class="bg-purple border-0 flex py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
+            class="bg-purple-default border-0 flex py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
             @click="convert"
             :disabled="!canConvert"
           >
             Optimize
           </button>
           <button
-            class="bg-purple border-0 flex py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
+            class="bg-purple-default border-0 flex py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
             @click="clear"
           >
             Clear
@@ -378,7 +378,7 @@ export default defineComponent({
   height calc(100vh - 344px)
 
 table tr:nth-child(odd) p
-  @apply bg-gray-800;
+  @apply bg-gray-800
 
 
 td
@@ -386,7 +386,7 @@ td
   padding 0
 
 td p
-  @apply bg-gray-500 my-1 pl-3 py-2
+  @apply my-1 pl-3 py-2;
   min-height 40px
 
 

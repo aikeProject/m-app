@@ -1,6 +1,8 @@
 <template>
-  <Sidebar v-on:select-view="handleViewSelect" />
-  <component :is="currentView" v-on:close-view="handleViewClose" />
+  <div class="bg-gray-900 flex h-full">
+    <Sidebar v-on:select-view="handleViewSelect" />
+    <component :is="currentView" v-on:close-view="handleViewClose" />
+  </div>
 </template>
 
 <script lang="ts">
