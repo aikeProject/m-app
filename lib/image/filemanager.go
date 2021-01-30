@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image/jpeg"
 	"image/png"
+	"magick-app/lib/config"
 	"path"
 	"sync"
 
@@ -13,15 +14,15 @@ import (
 )
 
 type FileManager struct {
+	Config  *config.Config
 	Files   []*File
-	OurDir  string
 	Runtime *wails.Runtime
 	Logger  *wails.CustomLogger
 }
 
-func NewFileManager() *FileManager {
+func NewFileManager(c *config.Config) *FileManager {
 	return &FileManager{
-		OurDir: "./",
+		Config: c,
 	}
 }
 
@@ -66,12 +67,12 @@ func (m *FileManager) Convert() (errs []error) {
 	for _, file := range m.Files {
 		f := file
 		go func(w *sync.WaitGroup) {
-			if err := f.Write(m.OurDir); err != nil {
-				m.Logger.Error(fmt.Sprintf("文件转换失败: %s", f.Name))
+			if err := f.Write(m.Config.OutDir); err != nil {
+				m.Logger.Error(fmt.Sprintf("文件转换失败: %s, %v", f.Name, err))
 				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
 			}
 			f.IsConverted = true
-			m.Logger.Infof("转换成功: %s", path.Join(m.OurDir, f.Name+".webp"))
+			m.Logger.Infof("转换成功: %s", path.Join(m.Config.OutDir, f.Name+".webp"))
 			m.Runtime.Events.Emit("conversion:complete", f.Name)
 			w.Done()
 		}(&wg)
@@ -90,12 +91,4 @@ func (m *FileManager) CountUnconverted() int {
 		}
 	}
 	return c
-}
-
-// 选择文件保存位置
-func (m *FileManager) SetOutDir() string {
-	dir := m.Runtime.Dialog.SelectDirectory()
-	m.OurDir = dir
-	m.Logger.Infof("OurDir: %s", dir)
-	return m.OurDir
 }

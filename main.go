@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"magick-app/demo"
+	"magick-app/lib/config"
 	"magick-app/lib/image"
 
 	"github.com/leaanthony/mewn"
@@ -33,11 +34,12 @@ func main() {
 		CSS:    css,
 		Colour: "#131313",
 	})
-
-	fileManager := image.NewFileManager()
+	newConfig := config.NewConfig()
+	fileManager := image.NewFileManager(newConfig)
 
 	app.Bind(basic)
 	app.Bind(myTodoList)
+	app.Bind(newConfig)
 	app.Bind(fileManager)
 	_ = app.Run()
 }

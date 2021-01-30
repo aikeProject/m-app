@@ -141,7 +141,7 @@ export default defineComponent({
       reader.readAsDataURL(file);
     },
     selectOutDir() {
-      window.backend.FileManager.SetOutDir()
+      window.backend.Config.SetOutDir()
         .then(result => console.log(result))
         .catch(err => console.error(err));
     }

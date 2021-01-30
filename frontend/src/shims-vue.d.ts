@@ -14,6 +14,8 @@ interface Todos {
 interface FileManager {
   HandleFile(string: string): Promise<string>;
   Convert(): Promise<any>;
+}
+interface Config {
   SetOutDir(): Promise<any>;
 }
 
@@ -22,5 +24,6 @@ declare interface Window {
     basic(): Promise<string>;
     Todos: Todos;
     FileManager: FileManager;
+    Config: Config;
   };
 }
