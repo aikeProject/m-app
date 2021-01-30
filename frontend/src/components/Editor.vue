@@ -95,6 +95,10 @@ export default defineComponent({
     }
   },
   methods: {
+    /**
+     * 图片格式转换
+     * eg: .jpg -> .webp
+     */
     convert() {
       window.backend.FileManager.Convert()
         .then(result => {
