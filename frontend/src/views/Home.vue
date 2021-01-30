@@ -1,8 +1,6 @@
 <template>
-  <div class="bg-gray-800">
-    <Sidebar />
-    <Editor />
-  </div>
+  <Sidebar />
+  <Editor />
 </template>
 
 <script lang="ts">
