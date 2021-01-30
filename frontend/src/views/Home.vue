@@ -1,17 +1,17 @@
 <template>
   <div class="bg-gray-800">
-    <HelloWorld />
+    <Editor />
   </div>
 </template>
 
 <script lang="ts">
 import { ref, defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import Editor from "@/components/Editor.vue"; // @ is an alias to /src
 
 export default defineComponent({
   name: "Home",
   components: {
-    HelloWorld
+    Editor
   },
   setup() {
     const message = ref("Click the Icon");
@@ -23,6 +23,9 @@ export default defineComponent({
     };
 
     return { message: message, getMessage: getMessage };
+  },
+  mounted() {
+    this.$store.dispatch("getConfig");
   }
 });
 </script>

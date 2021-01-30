@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/wailsapp/wails"
 )
@@ -24,15 +25,27 @@ func NewConfig() *Config {
 		_ = fmt.Errorf("找不到当前用户的主目录 %s", err)
 	}
 	od := path.Join(dir, "optimus")
+	cp := filepath.Clean(od)
+
 	if _, err := os.Stat(od); os.IsNotExist(err) {
-		if err := os.Mkdir(od, 0666); err != nil {
+		// os.ModePerm 0777
+		if err := os.Mkdir(od, os.ModePerm); err != nil {
 			od = "./"
 			_ = fmt.Errorf("无法创建默认输出目录:%s", err)
 		}
 	}
-	c.OutDir = od
+
+	c.OutDir = cp
 	c.Target = "webp"
 	return c
+}
+
+// 获取配置
+func (c Config) GetAppConfig() map[string]interface{} {
+	return map[string]interface{}{
+		"outDir": c.OutDir,
+		"target": c.Target,
+	}
 }
 
 func (c *Config) WailsInit(runtime *wails.Runtime) error {

@@ -1,5 +1,6 @@
 <template>
   <div class="mx-auto p-10">
+    {{ config.outDir }}
     <input
       type="file"
       accept="image/jpeg, image/png, image/jpg, image/webp"
@@ -69,11 +70,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { fExt, fName, fSize } from "lib/filw";
-import { CFile } from "components/HelloWorld";
+import { CFile } from "components/Editor";
 import Wails from "@wailsapp/runtime";
 
 export default defineComponent({
-  name: "HelloWorld",
+  name: "Editor",
   data() {
     return {
       files: [] as CFile[]
@@ -85,6 +86,12 @@ export default defineComponent({
       return this.files.some(f => {
         return !f.isConverted;
       });
+    },
+    /**
+     * 从状态管理中获取config配置参数
+     */
+    config() {
+      return this.$store.getters.config;
     }
   },
   methods: {
@@ -190,7 +197,10 @@ export default defineComponent({
     },
     selectOutDir() {
       window.backend.Config.SetOutDir()
-        .then(result => console.log(result))
+        .then(result => {
+          console.log(result);
+          this.$store.dispatch("getConfig");
+        })
         .catch(err => console.error(err));
     }
   },

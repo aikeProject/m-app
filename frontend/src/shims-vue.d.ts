@@ -15,8 +15,15 @@ interface FileManager {
   HandleFile(string: string): Promise<string>;
   Convert(): Promise<any>;
 }
+
+interface AppConfig {
+  outDir: string;
+  target: string;
+}
+
 interface Config {
   SetOutDir(): Promise<any>;
+  GetAppConfig(): Promise<AppConfig>;
 }
 
 declare interface Window {
