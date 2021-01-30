@@ -9,8 +9,8 @@
  * @param {string} filename
  * @return {string}
  */
-export function fExt(filename: string) {
-  return filename.split(".").pop();
+export function fExt(filename: string): string {
+  return filename.split(".").pop() || "";
 }
 
 /**

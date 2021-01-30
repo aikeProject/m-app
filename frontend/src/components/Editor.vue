@@ -6,7 +6,8 @@
       type="file"
       accept="image/jpeg, image/png, image/jpg, image/webp"
       multiple
-      @change="processFileInput"
+      @input="processFileInput"
+      ref="fileInput"
     />
     <label for="target">Target</label>
     <select class="text-black" name="target" id="target" @change="selectTarget">
@@ -38,32 +39,32 @@
         <thead>
           <tr>
             <th
-              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
             >
               文件名
             </th>
             <th
-              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
             >
               大小
             </th>
             <th
-              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
             >
               转换后大小
             </th>
             <th
-              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
             >
               转化率
             </th>
             <th
-              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
             >
               结果
             </th>
             <th
-              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200"
+              class="tracking-wider font-medium pl-3 text-gray-900 text-left text-sm bg-gray-200 uppercase"
             >
               完成
             </th>
@@ -71,16 +72,16 @@
         </thead>
         <tbody>
           <tr v-for="(file, i) in files" :key="`${i}-${file.name}`">
-            <td class="px-4 py-3">{{ file.filename }}</td>
-            <td class="font-mono px-4 py-3">{{ getPrettySize(file.size) }}</td>
-            <td class="font-mono px-4 py-3">
+            <td class="cell-l">{{ file.filename }}</td>
+            <td class="font-mono">{{ getPrettySize(file.size) }}</td>
+            <td class="font-mono">
               {{ getPrettySize(file.convertedSize) }}
             </td>
-            <td class="px-4 py-3">{{ getSavings(file) }}</td>
-            <td class="px-4 py-3" @click="openFile(file)">
+            <td>{{ getSavings(file) }}</td>
+            <td @click="openFile(file)">
               {{ file.convertedPath }}
             </td>
-            <td class="px-4 py-3">{{ file.isConverted }}</td>
+            <td class="cell-r">{{ file.isConverted }}</td>
           </tr>
         </tbody>
       </table>
@@ -162,12 +163,30 @@ export default defineComponent({
       return `${p.toString()}%`;
     },
     /**
+     * 兼容ie的写法 ......
+     */
+    getFileType(type: string, ext: string) {
+      if (this.isValidType(type)) return type;
+      if (this.isValidExt(ext)) return `image/${ext}`;
+      return "";
+    },
+    /**
      * 文件是否存在
      * @param id
      */
     hasFile(id: string): boolean {
       if (this.files.length === 0) return false;
       return this.files.some(f => f.id === id);
+    },
+    /**
+     * isValidExt returns true if the given file extension is of an accepted
+     * set of extensions.
+     * @param {string} ext - A file extension
+     * @returns {boolean}
+     */
+    isValidExt(ext: string) {
+      const v = ["jpg", "jpeg", "png", "webp"];
+      return v.indexOf(ext) >= 0;
     },
     /**
      * 检查文件类型
@@ -189,9 +208,11 @@ export default defineComponent({
       files.forEach(f => {
         const name = fName(f.name);
         const size = f.size;
+        const ext = fExt(f.name);
+        const type = this.getFileType(f.type, ext);
         const id = this.createFileId(name, size);
-        if (!this.isValidType(f.type) || this.hasFile(name)) return;
-        this.processFile(f, id);
+        if (!type || this.hasFile(name)) return;
+        this.processFile(f, id, type);
         this.files.push({
           id,
           name,
@@ -203,7 +224,7 @@ export default defineComponent({
         });
       });
     },
-    processFile(file: File, id: string) {
+    processFile(file: File, id: string, type: string) {
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
@@ -211,10 +232,10 @@ export default defineComponent({
           window.backend.FileManager.HandleFile(
             JSON.stringify({
               id,
-              data: (reader.result as string).split(",")[1],
+              type,
               ext: fExt(name),
               name: fName(name),
-              type: file.type
+              data: (reader.result as string).split(",")[1]
             })
           );
         }
@@ -264,6 +285,7 @@ export default defineComponent({
      */
     clear() {
       this.files = [];
+      // this.$refs["fileInput"].value = "";
       window.backend.Config.Clear()
         .then(console.log)
         .catch(console.error);
@@ -287,4 +309,22 @@ export default defineComponent({
   min-height calc(100vh / 5)
   max-height calc(100vh / 2)
   overflow auto
+
+td
+  margin 0
+  padding 0
+
+td p
+  @apply bg-gray-500 my-1 pl-3 py-2
+  min-height 40px
+
+
+td p.cell-l
+  border-top-left-radius 6px
+  border-bottom-left-radius 6px
+
+
+td p.cell-r
+  border-top-right-radius 6px
+  border-bottom-right-radius 6px
 </style>
