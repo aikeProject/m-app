@@ -72,6 +72,7 @@ func (m *FileManager) Convert() (errs []error) {
 			}
 			f.IsConverted = true
 			m.Logger.Infof("转换成功: %s", path.Join(m.OurDir, f.Name+".webp"))
+			m.Runtime.Events.Emit("conversion:complete", f.Name)
 			w.Done()
 		}(&wg)
 	}

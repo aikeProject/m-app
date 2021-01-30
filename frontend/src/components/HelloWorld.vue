@@ -2,9 +2,9 @@
   <div class="mx-auto p-10">
     <input
       type="file"
+      accept="image/jpeg, image/png, image/jpg"
       multiple
       @change="processFileInput"
-      accept="image/jpeg,image/png,image/jpg"
     />
     <button
       class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
@@ -14,6 +14,7 @@
     </button>
     <button
       class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+      :disabled="!canConvert"
       @click="convert"
     >
       转换
@@ -42,7 +43,7 @@
         <tbody>
           <tr v-for="(file, i) in files" :key="`${i}-${file.name}`">
             <td class="px-4 py-3">{{ file.filename }}</td>
-            <td class="px-4 py-3">{{ file.size }}</td>
+            <td class="font-mono px-4 py-3">{{ file.size }}</td>
             <td class="px-4 py-3">{{ file.isConverted }}</td>
           </tr>
         </tbody>
@@ -55,6 +56,7 @@
 import { defineComponent } from "vue";
 import { fExt, fName, fSize } from "lib/filw";
 import { CFile } from "components/HelloWorld";
+import Wails from "@wailsapp/runtime";
 
 export default defineComponent({
   name: "HelloWorld",
@@ -66,6 +68,14 @@ export default defineComponent({
       files: [] as CFile[]
     };
   },
+  computed: {
+    canConvert(): boolean {
+      if (this.files.length === 0) return false;
+      return this.files.some(f => {
+        return !f.isConverted;
+      });
+    }
+  },
   methods: {
     convert() {
       window.backend.FileManager.Convert()
@@ -74,10 +84,36 @@ export default defineComponent({
         })
         .catch(error => console.error(error));
     },
+    /**
+     * 通过文件名查找文件
+     * @param name
+     */
+    getFileByName(name: string) {
+      if (this.files.length === 0) return;
+      return this.files.find(f => f.name === name);
+    },
+    /**
+     * 文件是否存在
+     * @param name}
+     */
+    hasFile(name: string): boolean {
+      if (this.files.length === 0) return false;
+      return this.files.some(f => f.name === name);
+    },
+    /**
+     * 检查文件类型
+     * @param type
+     */
+    isValidType(type: string): boolean {
+      const v = ["image/png", "image/jpeg", "image/jpeg"];
+      return v.indexOf(type) >= 0;
+    },
     processFileInput(e: InputEvent) {
       const target = e.target as HTMLInputElement;
       const files: File[] = target.files ? [].slice.apply(target.files) : [];
       files.forEach(f => {
+        const name = fName(f.name);
+        if (!this.isValidType(f.type) || this.hasFile(name)) return;
         this.processFile(f);
         this.files.push({
           filename: f.name,
@@ -109,6 +145,13 @@ export default defineComponent({
         .then(result => console.log(result))
         .catch(err => console.error(err));
     }
+  },
+  mounted() {
+    Wails.Events.On("conversion:complete", name => {
+      const f = this.getFileByName(name);
+      if (!f) return;
+      f.isConverted = true;
+    });
   }
 });
 </script>
