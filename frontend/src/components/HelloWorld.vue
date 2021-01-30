@@ -74,9 +74,6 @@ import Wails from "@wailsapp/runtime";
 
 export default defineComponent({
   name: "HelloWorld",
-  props: {
-    msg: String
-  },
   data() {
     return {
       files: [] as CFile[]

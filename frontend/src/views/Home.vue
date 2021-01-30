@@ -1,12 +1,6 @@
 <template>
-  <div class="home">
-    <img
-      class="logo"
-      @click="getMessage"
-      alt="Vue logo"
-      src="../assets/appicon.png"
-    />
-    <HelloWorld :msg="message" />
+  <div class="bg-gray-800">
+    <HelloWorld />
   </div>
 </template>
 
