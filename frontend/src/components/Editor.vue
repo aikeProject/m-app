@@ -58,6 +58,11 @@
               转化率
             </th>
             <th
+              class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200 rounded-tl rounded-bl"
+            >
+              结果
+            </th>
+            <th
               class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-200"
             >
               完成
@@ -72,6 +77,9 @@
               {{ getPrettySize(file.convertedSize) }}
             </td>
             <td class="px-4 py-3">{{ getSavings(file) }}</td>
+            <td class="px-4 py-3" @click="openFile(file)">
+              {{ file.convertedPath }}
+            </td>
             <td class="px-4 py-3">{{ file.isConverted }}</td>
           </tr>
         </tbody>
@@ -190,7 +198,8 @@ export default defineComponent({
           size,
           filename: f.name,
           isConverted: false,
-          convertedSize: 0
+          convertedSize: 0,
+          convertedPath: ""
         });
       });
     },
@@ -243,10 +252,18 @@ export default defineComponent({
         .catch(err => console.error(err));
     },
     /**
+     * 打开文件
+     */
+    openFile(file: CFile) {
+      window.backend.FileManager.OpenFile(file.convertedPath)
+        .then(res => console.log(res))
+        .catch(err => console.error(err));
+    },
+    /**
      * 清空选择的所有文件
      */
     clear() {
-      this.file = [];
+      this.files = [];
       window.backend.Config.Clear()
         .then(console.log)
         .catch(console.error);
@@ -258,6 +275,7 @@ export default defineComponent({
       if (!f) return;
       f.isConverted = true;
       f.convertedSize = e.size;
+      f.convertedPath = e.path;
     });
   }
 });

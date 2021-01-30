@@ -10,6 +10,7 @@ import (
 	"magick-app/lib/webp"
 	"os"
 	"path"
+	"path/filepath"
 )
 
 type File struct {
@@ -93,6 +94,7 @@ func (f *File) Write(dir string, target string) (err error) {
 		return err
 	}
 	// 已转换文件的地址
-	f.ConvertedFile = dest
+	f.ConvertedFile = filepath.Clean(dest)
+	f.IsConverted = true
 	return nil
 }

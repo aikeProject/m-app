@@ -8,6 +8,7 @@ export interface CFile {
   id: string;
   filename: string;
   isConverted: boolean;
+  convertedPath: string;
   name: string;
   size: number;
   convertedSize: 0;

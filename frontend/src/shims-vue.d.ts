@@ -14,6 +14,7 @@ interface Todos {
 interface FileManager {
   HandleFile(string: string): Promise<string>;
   Convert(): Promise<any>;
+  OpenFile(path: string): Promise<any>;
 }
 
 interface AppConfig {

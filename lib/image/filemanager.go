@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"magick-app/lib/config"
 	"path"
+	"strings"
 	"sync"
 
 	"github.com/wailsapp/wails"
@@ -43,7 +44,7 @@ func (m *FileManager) HandleFile(fileJson string) (err error) {
 		return err
 	}
 	m.Files = append(m.Files, file)
-	m.Logger.Infof("添加到文件管理器: %s, type: %s", file.Name, file.MimeTye)
+	m.Logger.Infof("添加到文件管理器: id:%s, name: %s, type: %s", file.Id, file.Name, file.MimeTye)
 
 	return nil
 }
@@ -54,29 +55,33 @@ func (m *FileManager) Convert() (errs []error) {
 	wg.Add(m.CountUnconverted())
 
 	for _, file := range m.Files {
+		m.Logger.Infof("m.File: %s", file.Id)
 		f := file
-		go func(w *sync.WaitGroup) {
-			err := f.Write(m.Config.OutDir, m.Config.Target)
-			if err != nil {
-				m.Logger.Error(fmt.Sprintf("文件转换失败: %s, %v", f.Name, err))
-				errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
-			} else {
-				f.IsConverted = true
-				m.Logger.Infof("转换成功: %s", path.Join(m.Config.OutDir, f.Name+".webp"))
-				s, err := f.GetConvertedSize()
+		if !f.IsConverted {
+			go func(w *sync.WaitGroup) {
+				err := f.Write(m.Config.OutDir, m.Config.Target)
 				if err != nil {
-					m.Logger.Errorf("获取不到转换文件大小：%v", err)
+					m.Logger.Error(fmt.Sprintf("文件转换失败: %s, %v", f.Name, err))
+					errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
+				} else {
+					f.IsConverted = true
+					m.Logger.Infof("转换成功: %s", path.Join(m.Config.OutDir, f.Name+".webp"))
+					s, err := f.GetConvertedSize()
+					if err != nil {
+						m.Logger.Errorf("获取不到转换文件大小：%v", err)
+					}
+					m.Runtime.Events.Emit("conversion:complete", map[string]interface{}{
+						"id":   f.Id,
+						"size": s,
+						// 路径转换
+						"path": strings.Replace(f.ConvertedFile, "\\", "/", -1),
+					})
 				}
-				m.Runtime.Events.Emit("conversion:complete", map[string]interface{}{
-					"id":   f.Id,
-					"size": s,
-				})
-			}
-			w.Done()
-		}(&wg)
+				w.Done()
+			}(&wg)
+		}
 	}
 	wg.Wait()
-
 	return errs
 }
 
@@ -92,6 +97,14 @@ func (m *FileManager) CountUnconverted() int {
 }
 
 // 清空选择的文件
-func (m FileManager) Clear() {
+func (m *FileManager) Clear() {
 	m.Files = nil
+}
+
+// 打开文件
+func (m *FileManager) OpenFile(p string) error {
+	if err := m.Runtime.Browser.OpenFile(p); err != nil {
+		return err
+	}
+	return nil
 }
