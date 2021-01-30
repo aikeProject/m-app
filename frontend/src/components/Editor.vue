@@ -27,6 +27,12 @@
     >
       转换
     </button>
+    <button
+      class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+      @click="clear"
+    >
+      清空
+    </button>
     <div v-if="files.length > 0" class="table-wrapper">
       <table class="table-auto w-full text-left whitespace-nowrap">
         <thead>
@@ -235,6 +241,15 @@ export default defineComponent({
       window.backend.Config.OpenOutputDir()
         .then(res => console.log(res))
         .catch(err => console.error(err));
+    },
+    /**
+     * 清空选择的所有文件
+     */
+    clear() {
+      this.file = [];
+      window.backend.Config.Clear()
+        .then(console.log)
+        .catch(console.error);
     }
   },
   mounted() {

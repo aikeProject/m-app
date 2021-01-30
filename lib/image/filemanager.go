@@ -90,3 +90,8 @@ func (m *FileManager) CountUnconverted() int {
 	}
 	return c
 }
+
+// 清空选择的文件
+func (m FileManager) Clear() {
+	m.Files = nil
+}

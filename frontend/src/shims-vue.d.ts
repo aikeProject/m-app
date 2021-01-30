@@ -26,6 +26,7 @@ interface Config {
   GetAppConfig(): Promise<AppConfig>;
   SetTarget(target: string): Promise<any>;
   OpenOutputDir(): Promise<any>;
+  Clear(): Promise<any>;
 }
 
 declare interface Window {
