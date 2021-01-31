@@ -3,7 +3,7 @@
     <header class="border-b-2 border-gray-800 flex flex-wrap">
       <div class="w-1/2">
         <div
-          class="bg-gray-800 border-2 border-dashed cursor-pointer flex flex-col items-center justify-center py-10 ta-slow rounded-sm"
+          class="bg-gray-800 border-2 border-dashed cursor-pointer drop-zone flex flex-col items-center justify-center py-10 ta-slow rounded-sm"
           :class="isDragging ? 'border-green-default' : 'border-gray-400'"
           ref="dropZone"
         >
@@ -31,65 +31,86 @@
         </div>
       </div>
       <div class="pl-6 w-1/2">
-        <div v-if="!stats.time" class="flex h-full items-center justify-center">
-          <h2 class="leading-none text-4xl text-center text-green-default">
-            Add image files<br />to get started
-          </h2>
-        </div>
-        <div v-else class="flex flex-wrap items-center justify-center h-full">
-          <div class="px-4 w-4/12">
-            <h2
-              class="font-bold leading-none text-5xl text-green-default tracking-tight"
-            >
-              {{ getPrettySize(stats.savings) }}
+        <transition name="fade-fast" mode="out-in">
+          <div
+            v-if="!stats.time"
+            key="intro"
+            class="flex h-full items-center justify-center"
+          >
+            <h2 class="leading-none text-4xl text-center text-green">
+              Add image files<br />to get started
             </h2>
-            <p class="font-medium text-gray-300 tracking-wider uppercase">
-              Saved
-            </p>
           </div>
-          <div class="px-4 w-3/12">
-            <p class="font-bold text-2xl">{{ stats.count }}</p>
-            <p class="font-medium text-gray-300 tracking-wider uppercase">
-              {{ stats.count > 1 ? "Images" : "Image" }}
-            </p>
-            <p class="font-bold text-2xl">
-              {{ getPrettyTime(stats.time)[0] }}
-            </p>
-            <p class="font-medium text-gray-300 tracking-wider uppercase">
-              {{ getPrettyTime(stats.time)[1] }}
-            </p>
+          <div
+            v-else
+            key="stats"
+            class="flex flex-wrap items-center justify-center h-full"
+          >
+            <div class="px-4 w-4/12">
+              <h2
+                class="font-bold leading-none text-5xl text-green tracking-tight"
+              >
+                {{ getPrettySize(stats.savings) }}
+              </h2>
+              <p class="font-medium text-gray-300 tracking-wider uppercase">
+                Saved
+              </p>
+            </div>
+            <div class="px-4 w-3/12">
+              <p class="font-bold text-2xl">{{ stats.count }}</p>
+              <p class="font-medium text-gray-300 tracking-wider uppercase">
+                {{ stats.count > 1 ? "Images" : "Image" }}
+              </p>
+              <p class="font-bold text-2xl">
+                {{ getPrettyTime(stats.time)[0] }}
+              </p>
+              <p class="font-medium text-gray-300 tracking-wider uppercase">
+                {{ getPrettyTime(stats.time)[1] }}
+              </p>
+            </div>
+            <div class="px-4 w-5/12">
+              <p class="font-bold text-2xl">2.25 GB</p>
+              <p class="font-medium text-gray-300 tracking-wider uppercase">
+                All time Savings
+              </p>
+              <p class="font-bold text-2xl">2,204</p>
+              <p class="font-medium text-gray-300 tracking-wider uppercase">
+                All time Images
+              </p>
+            </div>
+            <div class="px-4 w-full">
+              <p>
+                处理{{ lastStat.count }}张图片耗时
+                {{ getPrettyTime(lastStat.time)[0] }}
+                {{ getPrettyTime(lastStat.time)[1].toLowerCase() }}
+              </p>
+            </div>
           </div>
-          <div class="px-4 w-5/12">
-            <p class="font-bold text-2xl">2.25 GB</p>
-            <p class="font-medium text-gray-300 tracking-wider uppercase">
-              All time Savings
-            </p>
-            <p class="font-bold text-2xl">2,204</p>
-            <p class="font-medium text-gray-300 tracking-wider uppercase">
-              All time Images
-            </p>
-          </div>
-          <div class="px-4 w-full">
-            <p>
-              处理{{ lastStat.count }}张图片耗时
-              {{ getPrettyTime(lastStat.time)[0] }}
-              {{ getPrettyTime(lastStat.time)[1].toLowerCase() }}
-            </p>
-          </div>
-        </div>
+        </transition>
       </div>
       <footer class="w-full">
         <section class="flex justify-between py-6 w-full">
           <button
-            class="bg-purple-default border-0 flex font-medium py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
+            class="btn focus:outline-none ta-slow"
+            :class="
+              canConvert
+                ? 'border-purple hover:bg-purple hover:text-gray-900 text-gray-200'
+                : 'btn--disabled'
+            "
             @click="convert"
             :disabled="!canConvert"
           >
             转换格式
           </button>
           <button
-            class="bg-purple-default border-0 flex font-medium  py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
+            class="btn focus:outline-none ta-slow"
+            :class="
+              files.length > 0
+                ? 'border-gray-400 hover:bg-gray-400 hover:text-gray-900'
+                : 'btn--disabled'
+            "
             @click="clear"
+            :disabled="files.length === 0"
           >
             清空
           </button>
@@ -104,84 +125,86 @@
       @input="handleFileInput"
       ref="fileInput"
     />
-    <div v-if="files.length > 0" class="table-wrapper">
-      <table class="table-auto w-full text-left whitespace-nowrap">
-        <thead>
-          <tr>
-            <th
-              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
-            >
-              文件名
-            </th>
-            <th
-              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
-            >
-              大小
-            </th>
-            <th
-              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
-            >
-              转换后大小
-            </th>
-            <th
-              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
-            >
-              转化率
-            </th>
-            <!--            <th-->
-            <!--              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"-->
-            <!--            >-->
-            <!--              结果-->
-            <!--            </th>-->
-            <th
-              class="font-medium text-center pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
-            >
-              状态
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(file, i) in files" :key="`${i}-${file.name}`">
-            <td class="cell-l">{{ file.filename }}</td>
-            <td>{{ getPrettySize(file.size) }}</td>
-            <td>
-              {{ getPrettySize(file.convertedSize) }}
-            </td>
-            <td>{{ getSavings(file) }}</td>
-            <!--            <td @click="openFile(file)">-->
-            <!--              {{ file.convertedPath }}-->
-            <!--            </td>-->
-            <td>
-              <p
-                v-if="file.isConverted"
-                class="cell-r flex items-center justify-center"
+    <transition name="fade" mode="out-in">
+      <div v-if="files.length > 0" class="table-wrapper">
+        <table class="table-auto w-full text-left whitespace-nowrap">
+          <thead>
+            <tr>
+              <th
+                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
               >
-                <svg
-                  version="1.1"
-                  :id="`${i}-check`"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  x="0px"
-                  y="0px"
-                  viewBox="0 0 20 20"
-                  enable-background="new 0 0 20 20"
-                  width="20px"
-                  height="20px"
-                  xml:space="preserve"
+                文件名
+              </th>
+              <th
+                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+              >
+                大小
+              </th>
+              <th
+                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+              >
+                转换后大小
+              </th>
+              <th
+                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+              >
+                转化率
+              </th>
+              <!--            <th-->
+              <!--              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"-->
+              <!--            >-->
+              <!--              结果-->
+              <!--            </th>-->
+              <th
+                class="font-medium text-center pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+              >
+                状态
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(file, i) in files" :key="`${i}-${file.name}`">
+              <td class="cell-l">{{ file.filename }}</td>
+              <td>{{ getPrettySize(file.size) }}</td>
+              <td>
+                {{ getPrettySize(file.convertedSize) }}
+              </td>
+              <td>{{ getSavings(file) }}</td>
+              <!--            <td @click="openFile(file)">-->
+              <!--              {{ file.convertedPath }}-->
+              <!--            </td>-->
+              <td>
+                <p
+                  v-if="file.isConverted"
+                  class="cell-r flex items-center justify-center"
                 >
-                  <path
-                    fill="#07FDBC"
-                    d="M10,0C4.5,0,0,4.5,0,10s4.5,10,10,10s10-4.5,10-10S15.5,0,10,0z M8,14.4l-3.7-3.7l1.4-1.4L8,11.6l5.3-5.3
+                  <svg
+                    version="1.1"
+                    :id="`${i}-check`"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    x="0px"
+                    y="0px"
+                    viewBox="0 0 20 20"
+                    enable-background="new 0 0 20 20"
+                    width="20px"
+                    height="20px"
+                    xml:space="preserve"
+                  >
+                    <path
+                      fill="#07FDBC"
+                      d="M10,0C4.5,0,0,4.5,0,10s4.5,10,10,10s10-4.5,10-10S15.5,0,10,0z M8,14.4l-3.7-3.7l1.4-1.4L8,11.6l5.3-5.3
                             l1.4,1.4L8,14.4z"
-                  />
-                </svg>
-              </p>
-              <p v-else class="cell-r"></p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+                    />
+                  </svg>
+                </p>
+                <p v-else class="cell-r"></p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -501,4 +524,11 @@ td p.cell-l
 td p.cell-r
   border-top-right-radius 6px
   border-bottom-right-radius 6px
+
+.drop-zone > svg path
+  transition fill 600ms cubic-bezier(.07, .95, 0, 1)
+
+
+.drop-zone:hover > svg path
+  fill #07fdbc
 </style>
