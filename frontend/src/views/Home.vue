@@ -6,6 +6,7 @@
         <component :is="currentView" v-on:close-view="handleViewClose" />
       </keep-alive>
     </transition>
+    <Notification />
   </div>
 </template>
 
@@ -16,6 +17,7 @@ import Editor from "@/components/Editor.vue";
 import Sidebar from "components/Sidebar.vue";
 import Settings from "components/Settings.vue";
 import About from "components/About.vue";
+import Notification from "components/Notification.vue";
 
 export default defineComponent({
   name: "Home",
@@ -23,7 +25,8 @@ export default defineComponent({
     Editor,
     Sidebar,
     Settings,
-    About
+    About,
+    Notification
   },
   setup() {
     const store = useStore();

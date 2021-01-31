@@ -41,11 +41,7 @@
               Add image files<br />to get started
             </h2>
           </div>
-          <div
-            v-else
-            key="stats"
-            class="flex flex-wrap items-center justify-center h-full"
-          >
+          <div v-else key="stats" class="flex flex-wrap items-end h-full">
             <div class="px-3 w-5/12">
               <h2
                 class="font-bold leading-none text-5xl text-green-default tracking-tight"
@@ -86,13 +82,6 @@
                 All time Images
               </p>
             </div>
-            <div class="px-3 w-full">
-              <p>
-                处理{{ lastStat.count }}张图片耗时
-                {{ getPrettyTime(lastStat.time)[0] }}
-                {{ getPrettyTime(lastStat.time)[1].toLowerCase() }}
-              </p>
-            </div>
           </div>
         </transition>
       </div>
@@ -102,7 +91,7 @@
             class="btn focus:outline-none ta-slow"
             :class="
               canConvert
-                ? 'border-purple hover:bg-purple hover:text-gray-900 text-gray-200'
+                ? 'border-purple hover:bg-purple-default hover:text-gray-900 text-gray-200'
                 : 'btn--disabled'
             "
             @click="convert"
@@ -222,6 +211,7 @@ import { fExt, fName, fSize } from "lib/filw";
 import { CFile } from "components/Editor";
 import Wails from "@wailsapp/runtime";
 import { prettyTime } from "lib/time";
+import { EventBus } from "../lib/event-bus";
 
 export default defineComponent({
   name: "Editor",
@@ -229,10 +219,6 @@ export default defineComponent({
     return {
       files: [] as CFile[],
       isDragging: false,
-      lastStat: {
-        count: 0,
-        time: 0
-      },
       stats: {
         count: 0,
         savings: 0,
@@ -365,7 +351,19 @@ export default defineComponent({
         const ext = fExt(f.name);
         const type = this.getFileType(f.type, ext);
         const id = this.createFileId(name, size);
-        if (!type || this.hasFile(name)) return;
+        if (!type) {
+          EventBus.emit("notify", {
+            msg:
+              "File type not supported. Valid file types include JPG, PNG, and WebP."
+          });
+          return;
+        }
+        if (this.hasFile(name)) {
+          EventBus.emit("notify", {
+            msg: "Image file has already been added to the file list."
+          });
+          return;
+        }
         this.processFile(f, id, type);
         this.files.push({
           id,
@@ -377,6 +375,9 @@ export default defineComponent({
           convertedPath: ""
         });
       });
+      // eslint-disable-next-line
+      // @ts-ignore
+      this.$refs["fileInput"].value = null;
     },
     processFile(file: File, id: string, type: string) {
       const reader = new FileReader();
@@ -431,9 +432,12 @@ export default defineComponent({
       const t = e.time;
       this.stats.count += c;
       this.stats.time += t;
-      this.lastStat.count = c;
-      this.lastStat.time = t;
       this.calcTotalSavings();
+      EventBus.emit("notify", {
+        msg: `Optimized ${c} ${c > 1 ? "images" : "image"} in ${
+          prettyTime(t)[0]
+        } ${prettyTime(t)[1].toLowerCase()}.`
+      });
     });
 
     // eslint-disable-next-line
