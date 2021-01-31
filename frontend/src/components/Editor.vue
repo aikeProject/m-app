@@ -3,7 +3,8 @@
     <header class="border-b-2 border-gray-800 flex">
       <div class="w-1/2">
         <div
-          class="bg-gray-800 flex flex-col items-center justify-center py-10"
+          class="bg-gray-800 border-2 border-dashed cursor-pointer flex flex-col items-center justify-center py-10 ta-slow rounded-sm"
+          :class="isDragging ? 'border-green-default' : 'border-gray-400'"
           ref="dropZone"
         >
           <svg
@@ -30,14 +31,14 @@
         </div>
         <section class="flex justify-between py-6 w-full">
           <button
-            class="bg-purple-default border-0 flex py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
+            class="bg-purple-default border-0 flex font-medium py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
             @click="convert"
             :disabled="!canConvert"
           >
             转换格式
           </button>
           <button
-            class="bg-purple-default border-0 flex py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
+            class="bg-purple-default border-0 flex font-medium  py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
             @click="clear"
           >
             清除
@@ -52,27 +53,6 @@
         </div>
       </div>
     </header>
-    <p @click="openDir">{{ config.outDir }}</p>
-    <p>{{ config.target }}</p>
-    <input
-      type="file"
-      accept="image/jpeg, image/png, image/jpg, image/webp"
-      multiple
-      @input="processFileInput"
-      ref="fileInput"
-    />
-    <label for="target">Target</label>
-    <select class="text-black" name="target" id="target" @change="selectTarget">
-      <option value="webp" selected>WebP</option>
-      <option value="jpg">JPG</option>
-      <option value="png">PNG</option>
-    </select>
-    <button
-      class="flex ml-auto bg-purple-default border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded-full text-gray-900"
-      @click="selectOutDir"
-    >
-      保存目录
-    </button>
     <div v-if="files.length > 0" class="table-wrapper">
       <table class="table-auto w-full text-left whitespace-nowrap">
         <thead>
@@ -97,15 +77,15 @@
             >
               转化率
             </th>
+            <!--            <th-->
+            <!--              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"-->
+            <!--            >-->
+            <!--              结果-->
+            <!--            </th>-->
             <th
               class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
-              结果
-            </th>
-            <th
-              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
-            >
-              完成
+              状态
             </th>
           </tr>
         </thead>
@@ -117,9 +97,9 @@
               {{ getPrettySize(file.convertedSize) }}
             </td>
             <td>{{ getSavings(file) }}</td>
-            <td @click="openFile(file)">
-              {{ file.convertedPath }}
-            </td>
+            <!--            <td @click="openFile(file)">-->
+            <!--              {{ file.convertedPath }}-->
+            <!--            </td>-->
             <td>
               <p
                 v-if="file.isConverted"
@@ -164,7 +144,8 @@ export default defineComponent({
   name: "Editor",
   data() {
     return {
-      files: [] as CFile[]
+      files: [] as CFile[],
+      isDragging: false
     };
   },
   computed: {
@@ -173,12 +154,6 @@ export default defineComponent({
       return this.files.some(f => {
         return !f.isConverted;
       });
-    },
-    /**
-     * 从状态管理中获取config配置参数
-     */
-    config() {
-      return this.$store.getters.config;
     }
   },
   methods: {
@@ -267,10 +242,9 @@ export default defineComponent({
       ];
       return v.indexOf(type) >= 0;
     },
-    processFileInput(e: InputEvent) {
-      const target = e.target as HTMLInputElement;
-      const files: File[] = target.files ? [].slice.apply(target.files) : [];
-      files.forEach(f => {
+    processFileInput(files: FileList) {
+      const fs: File[] = files ? [].slice.apply(files) : [];
+      fs.forEach(f => {
         const name = fName(f.name);
         const size = f.size;
         const ext = fExt(f.name);
@@ -307,36 +281,6 @@ export default defineComponent({
       };
       reader.readAsDataURL(file);
     },
-    // 选择输出目录
-    selectOutDir() {
-      window.backend.Config.SetOutDir()
-        .then(result => {
-          console.log(result);
-          this.$store.dispatch("getConfig");
-        })
-        .catch(err => console.error(err));
-    },
-    /**
-     * 选择转换格式
-     */
-    selectTarget(e: Event) {
-      const target = e.target as HTMLOptionElement;
-      console.log(target);
-      window.backend.Config.SetTarget(target.value)
-        .then(res => {
-          console.log(res);
-          this.$store.dispatch("getConfig");
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
-    // 打开文件输出目录
-    openDir() {
-      window.backend.Config.OpenOutputDir()
-        .then(res => console.log(res))
-        .catch(err => console.error(err));
-    },
     /**
      * 打开文件
      */
@@ -366,6 +310,70 @@ export default defineComponent({
       f.convertedSize = e.size;
       f.convertedPath = e.path;
     });
+
+    // eslint-disable-next-line
+    // @ts-ignore
+    const dz = this.$refs["dropZone"] as HTMLDivElement;
+
+    dz.addEventListener(
+      "click",
+      () => {
+        // eslint-disable-next-line
+        // @ts-ignore
+        this.$refs["fileInput"].click();
+      },
+      false
+    );
+    dz.addEventListener(
+      "dragenter",
+      e => {
+        e.stopPropagation();
+        e.preventDefault();
+      },
+      false
+    );
+    dz.addEventListener(
+      "dragover",
+      e => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (this.isDragging) return;
+        this.isDragging = true;
+      },
+      false
+    );
+    dz.addEventListener(
+      "dragend",
+      e => {
+        e.stopPropagation();
+        e.preventDefault();
+        this.isDragging = false;
+      },
+      false
+    );
+    dz.addEventListener(
+      "dragleave",
+      e => {
+        e.stopPropagation();
+        e.preventDefault();
+        this.isDragging = false;
+      },
+      false
+    );
+    dz.addEventListener(
+      "drop",
+      e => {
+        e.stopPropagation();
+        e.preventDefault();
+        const dt = e.dataTransfer;
+        if (dt) {
+          const f = dt.files;
+          this.isDragging = false;
+          this.processFileInput(f);
+        }
+      },
+      false
+    );
   }
 });
 </script>
@@ -374,11 +382,11 @@ export default defineComponent({
 <style scoped lang="stylus">
 .table-wrapper
   min-height 80px
-  /*max-height: calc(100vh / 2);*/
-  overflow auto
   height calc(100vh - 344px)
+  max-height calc(100vh / 2)
+  overflow auto
 
-table tr:nth-child(odd) p
+table tr:nth-child(odd)
   @apply bg-gray-800
 
 

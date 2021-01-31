@@ -2,7 +2,7 @@
   <nav class="flex flex-col items-center pl-10 pt-10 w-24">
     <div
       @click="selectView('Settings')"
-      class="border-2 border-gray-700 p-2 rounded-full w-10 h-10"
+      class="border-2 border-gray-700 p-2 rounded-full w-10 h-10 cursor-pointer"
     >
       <svg
         version="1.1"
@@ -28,7 +28,7 @@
     </div>
     <div
       @click="selectView('About')"
-      class="border-2 border-gray-700 flex h-8 items-center justify-center mt-4 p-2 rounded-full text-center w-8"
+      class="border-2 border-gray-700 cursor-pointer flex h-8 items-center justify-center mt-4 p-2 rounded-full text-center w-8"
     >
       <p class="font-bold">i</p>
     </div>
@@ -46,4 +46,20 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#cog {
+  transition: transform 0.3s cubic-bezier(0.07, 0.95, 0, 1);
+}
+
+#cog path {
+  transition: fill 0.3s cubic-bezier(0.07, 0.95, 0, 1);
+}
+
+div:hover > #cog {
+  transform: rotate(45deg);
+}
+
+div:hover > #cog path {
+  fill: #ce51ed;
+}
+</style>
