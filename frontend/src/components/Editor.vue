@@ -128,22 +128,22 @@
           <thead>
             <tr>
               <th
-                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+                class="font-medium p-3 text-gray-400 text-left text-sm tracking-wider uppercase"
               >
                 文件名
               </th>
               <th
-                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+                class="font-medium p-3 text-gray-400 text-left text-sm tracking-wider uppercase"
               >
                 大小
               </th>
               <th
-                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+                class="font-medium p-3 text-gray-400 text-left text-sm tracking-wider uppercase"
               >
                 转换后大小
               </th>
               <th
-                class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+                class="font-medium p-3 text-gray-400 text-left text-sm tracking-wider uppercase"
               >
                 转化率
               </th>
@@ -517,7 +517,13 @@ export default defineComponent({
   max-height calc(100vh / 2)
   overflow auto
 
-table tr:nth-child(odd)
+table thead tr
+  @apply bg-gray-800
+
+table tbody td
+  @apply px-3
+
+table tbody tr:nth-child(2n)
   @apply bg-gray-800
 
 
