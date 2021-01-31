@@ -1,7 +1,7 @@
 <template>
   <div class="w-full p-10">
     <header class="border-b-2 border-gray-800 flex flex-wrap">
-      <div class="w-1/2">
+      <div class="w-5/12">
         <div
           class="bg-gray-800 border-2 border-dashed cursor-pointer drop-zone flex flex-col items-center justify-center py-10 ta-slow rounded-sm"
           :class="isDragging ? 'border-green-default' : 'border-gray-400'"
@@ -30,7 +30,7 @@
           <p class="mt-6 text-gray-200">拖拽文件到此处或选择文件</p>
         </div>
       </div>
-      <div class="pl-6 w-1/2">
+      <div class="pl-6 w-7/12">
         <transition name="fade-fast" mode="out-in">
           <div
             v-if="!stats.time"
@@ -46,9 +46,9 @@
             key="stats"
             class="flex flex-wrap items-center justify-center h-full"
           >
-            <div class="px-4 w-4/12">
+            <div class="px-3 w-5/12">
               <h2
-                class="font-bold leading-none text-5xl text-green tracking-tight"
+                class="font-bold leading-none text-5xl text-green-default tracking-tight"
               >
                 {{ getPrettySize(stats.savings) }}
               </h2>
@@ -56,29 +56,37 @@
                 Saved
               </p>
             </div>
-            <div class="px-4 w-3/12">
+            <div class="px-3 w-3/12">
               <p class="font-bold text-2xl">{{ stats.count }}</p>
-              <p class="font-medium text-gray-300 tracking-wider uppercase">
+              <p
+                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+              >
                 {{ stats.count > 1 ? "Images" : "Image" }}
               </p>
               <p class="font-bold text-2xl">
                 {{ getPrettyTime(stats.time)[0] }}
               </p>
-              <p class="font-medium text-gray-300 tracking-wider uppercase">
+              <p
+                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+              >
                 {{ getPrettyTime(stats.time)[1] }}
               </p>
             </div>
-            <div class="px-4 w-5/12">
+            <div class="px-3 w-4/12">
               <p class="font-bold text-2xl">2.25 GB</p>
-              <p class="font-medium text-gray-300 tracking-wider uppercase">
+              <p
+                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+              >
                 All time Savings
               </p>
               <p class="font-bold text-2xl">2,204</p>
-              <p class="font-medium text-gray-300 tracking-wider uppercase">
+              <p
+                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+              >
                 All time Images
               </p>
             </div>
-            <div class="px-4 w-full">
+            <div class="px-3 w-full">
               <p>
                 处理{{ lastStat.count }}张图片耗时
                 {{ getPrettyTime(lastStat.time)[0] }}
@@ -89,7 +97,7 @@
         </transition>
       </div>
       <footer class="w-full">
-        <section class="flex justify-between py-6 w-full">
+        <section class="flex justify-between py-6 w-5/12">
           <button
             class="btn focus:outline-none ta-slow"
             :class="
