@@ -12,8 +12,8 @@
             <!-- warn -->
             <svg
               v-if="n.type === 'warn'"
+              id="warn-icon"
               version="1.1"
-              id="Layer_1"
               xmlns="http://www.w3.org/2000/svg"
               x="0px"
               y="0px"
@@ -32,8 +32,8 @@
             <!-- success -->
             <svg
               v-else
+              id="check-icon"
               version="1.1"
-              id="Layer_1"
               xmlns="http://www.w3.org/2000/svg"
               x="0px"
               y="0px"
