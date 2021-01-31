@@ -61,13 +61,13 @@ func (m *FileManager) Convert() (errs []error) {
 		f := file
 		if !f.IsConverted {
 			go func(w *sync.WaitGroup) {
-				err := f.Write(m.Config.OutDir, m.Config.Target)
+				err := f.Write(m.Config.App.OutDir, m.Config.App.Target)
 				if err != nil {
 					m.Logger.Error(fmt.Sprintf("文件转换失败: %s, %v", f.Name, err))
 					errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
 				} else {
 					f.IsConverted = true
-					m.Logger.Infof("转换成功: %s", path.Join(m.Config.OutDir, f.Name+".webp"))
+					m.Logger.Infof("转换成功: %s", path.Join(m.Config.App.OutDir, f.Name+".webp"))
 					s, err := f.GetConvertedSize()
 					if err != nil {
 						m.Logger.Errorf("获取不到转换文件大小：%v", err)
