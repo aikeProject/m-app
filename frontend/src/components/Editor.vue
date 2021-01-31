@@ -1,6 +1,6 @@
 <template>
   <div class="w-full p-10">
-    <header class="border-b-2 border-gray-800 flex">
+    <header class="border-b-2 border-gray-800 flex flex-wrap">
       <div class="w-1/2">
         <div
           class="bg-gray-800 border-2 border-dashed cursor-pointer flex flex-col items-center justify-center py-10 ta-slow rounded-sm"
@@ -27,8 +27,58 @@
                 c0.6,0,1-0.4,1-1v-4.9C48,21,47.6,20.6,47,20.6z"
             />
           </svg>
-          <p class="mt-6 text-gray-200">Drag and drop or select images</p>
+          <p class="mt-6 text-gray-200">拖拽文件到此处或选择文件</p>
         </div>
+      </div>
+      <div class="pl-6 w-1/2">
+        <div v-if="!stats.time" class="flex h-full items-center justify-center">
+          <h2 class="leading-none text-4xl text-center text-green-default">
+            Add image files<br />to get started
+          </h2>
+        </div>
+        <div v-else class="flex flex-wrap items-center justify-center h-full">
+          <div class="px-4 w-4/12">
+            <h2
+              class="font-bold leading-none text-5xl text-green-default tracking-tight"
+            >
+              {{ getPrettySize(stats.savings) }}
+            </h2>
+            <p class="font-medium text-gray-300 tracking-wider uppercase">
+              Saved
+            </p>
+          </div>
+          <div class="px-4 w-3/12">
+            <p class="font-bold text-2xl">{{ stats.count }}</p>
+            <p class="font-medium text-gray-300 tracking-wider uppercase">
+              {{ stats.count > 1 ? "Images" : "Image" }}
+            </p>
+            <p class="font-bold text-2xl">
+              {{ getPrettyTime(stats.time)[0] }}
+            </p>
+            <p class="font-medium text-gray-300 tracking-wider uppercase">
+              {{ getPrettyTime(stats.time)[1] }}
+            </p>
+          </div>
+          <div class="px-4 w-5/12">
+            <p class="font-bold text-2xl">2.25 GB</p>
+            <p class="font-medium text-gray-300 tracking-wider uppercase">
+              All time Savings
+            </p>
+            <p class="font-bold text-2xl">2,204</p>
+            <p class="font-medium text-gray-300 tracking-wider uppercase">
+              All time Images
+            </p>
+          </div>
+          <div class="px-4 w-full">
+            <p>
+              处理{{ lastStat.count }}张图片耗时
+              {{ getPrettyTime(lastStat.time)[0] }}
+              {{ getPrettyTime(lastStat.time)[1].toLowerCase() }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <footer class="w-full">
         <section class="flex justify-between py-6 w-full">
           <button
             class="bg-purple-default border-0 flex font-medium py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
@@ -41,18 +91,19 @@
             class="bg-purple-default border-0 flex font-medium  py-2 px-8 focus:outline-none hover:bg-green-default rounded-full text-gray-900"
             @click="clear"
           >
-            清除
+            清空
           </button>
         </section>
-      </div>
-      <div class="w-1/2">
-        <div class="flex h-full items-center justify-center">
-          <h2 class="leading-none text-4xl text-center text-green-default">
-            Add image files<br />to get started
-          </h2>
-        </div>
-      </div>
+      </footer>
     </header>
+    <input
+      type="file"
+      accept="image/jpeg, image/jpg, image/png, image/webp"
+      multiple
+      class="hidden"
+      @input="handleFileInput"
+      ref="fileInput"
+    />
     <div v-if="files.length > 0" class="table-wrapper">
       <table class="table-auto w-full text-left whitespace-nowrap">
         <thead>
@@ -83,7 +134,7 @@
             <!--              结果-->
             <!--            </th>-->
             <th
-              class="font-medium pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+              class="font-medium text-center pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
             >
               状态
             </th>
@@ -103,7 +154,7 @@
             <td>
               <p
                 v-if="file.isConverted"
-                class="flex items-center justify-center"
+                class="cell-r flex items-center justify-center"
               >
                 <svg
                   version="1.1"
@@ -125,7 +176,7 @@
                   />
                 </svg>
               </p>
-              <p v-else></p>
+              <p v-else class="cell-r"></p>
             </td>
           </tr>
         </tbody>
@@ -139,13 +190,23 @@ import { defineComponent } from "vue";
 import { fExt, fName, fSize } from "lib/filw";
 import { CFile } from "components/Editor";
 import Wails from "@wailsapp/runtime";
+import { prettyTime } from "lib/time";
 
 export default defineComponent({
   name: "Editor",
   data() {
     return {
       files: [] as CFile[],
-      isDragging: false
+      isDragging: false,
+      lastStat: {
+        count: 0,
+        time: 0
+      },
+      stats: {
+        count: 0,
+        savings: 0,
+        time: 0
+      }
     };
   },
   computed: {
@@ -209,6 +270,29 @@ export default defineComponent({
       if (this.isValidType(type)) return type;
       if (this.isValidExt(ext)) return `image/${ext}`;
       return "";
+    },
+    /**
+     * handleFileInput handles the file submission via form input.
+     * @param {Event} e
+     */
+    handleFileInput(e: InputEvent) {
+      const target = e.target as HTMLInputElement;
+      target.files && this.processFileInput(target.files);
+    },
+    /**
+     * 文件大小减小的总量
+     */
+    calcTotalSavings() {
+      this.files.forEach(f => {
+        if (!f.isConverted || f.convertedSize > f.size) return;
+        this.stats.savings += f.size - f.convertedSize;
+      });
+    },
+    /**
+     * 时间戳格式化
+     */
+    getPrettyTime(ms: number) {
+      return prettyTime(ms);
     },
     /**
      * 文件是否存在
@@ -309,6 +393,16 @@ export default defineComponent({
       f.isConverted = true;
       f.convertedSize = e.size;
       f.convertedPath = e.path;
+    });
+
+    Wails.Events.On("conversion:stat", e => {
+      const c = e.count;
+      const t = e.time;
+      this.stats.count += c;
+      this.stats.time += t;
+      this.lastStat.count = c;
+      this.lastStat.time = t;
+      this.calcTotalSavings();
     });
 
     // eslint-disable-next-line

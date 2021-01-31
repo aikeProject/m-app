@@ -7,6 +7,7 @@ import (
 	"path"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/wailsapp/wails"
 )
@@ -53,7 +54,8 @@ func (m *FileManager) HandleFile(fileJson string) (err error) {
 func (m *FileManager) Convert() (errs []error) {
 	var wg sync.WaitGroup
 	wg.Add(m.CountUnconverted())
-
+	c := 0
+	t := time.Now().UnixNano()
 	for _, file := range m.Files {
 		m.Logger.Infof("m.File: %s", file.Id)
 		f := file
@@ -76,12 +78,17 @@ func (m *FileManager) Convert() (errs []error) {
 						// 路径转换
 						"path": strings.Replace(f.ConvertedFile, "\\", "/", -1),
 					})
+					c++
 				}
 				w.Done()
 			}(&wg)
 		}
 	}
 	wg.Wait()
+	m.Runtime.Events.Emit("conversion:stat", map[string]interface{}{
+		"count": c,
+		"time":  (time.Now().UnixNano() - t) / 1000000,
+	})
 	return errs
 }
 
