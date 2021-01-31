@@ -354,13 +354,15 @@ export default defineComponent({
         if (!type) {
           EventBus.emit("notify", {
             msg:
-              "File type not supported. Valid file types include JPG, PNG, and WebP."
+              "File type not supported. Valid file types include JPG, PNG, and WebP.",
+            type: "warn"
           });
           return;
         }
         if (this.hasFile(name)) {
           EventBus.emit("notify", {
-            msg: "Image file has already been added to the file list."
+            msg: "Image file has already been added to the file list.",
+            type: "warn"
           });
           return;
         }
