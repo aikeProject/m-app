@@ -5,16 +5,26 @@ export default createStore({
     config: {
       outDir: "",
       target: ""
+    },
+    stats: {
+      byteCount: 0,
+      imageCount: 0
     }
   },
   getters: {
     config(state) {
       return state.config;
+    },
+    stats(state) {
+      return state.stats;
     }
   },
   mutations: {
     setConfig(state, config) {
       state.config = config;
+    },
+    setStats(state, s) {
+      state.stats = s;
     }
   },
   actions: {
@@ -28,6 +38,18 @@ export default createStore({
     },
     setConfig(context, config) {
       context.commit("setConfig", config);
+    },
+    getStats(context) {
+      window.backend.Stat.GetStats()
+        .then(s => {
+          context.commit("setStats", s);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    setStats(context, s) {
+      context.commit("setStats", s);
     }
   },
   modules: {}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"magick-app/lib/config"
+	"magick-app/lib/stat"
 	"path"
 	"strings"
 	"sync"
@@ -13,15 +14,17 @@ import (
 )
 
 type FileManager struct {
-	Config  *config.Config
 	Files   []*File
 	Runtime *wails.Runtime
 	Logger  *wails.CustomLogger
+	config  *config.Config
+	stats   *stat.Stat
 }
 
-func NewFileManager(c *config.Config) *FileManager {
+func NewFileManager(c *config.Config, s *stat.Stat) *FileManager {
 	return &FileManager{
-		Config: c,
+		config: c,
+		stats:  s,
 	}
 }
 
@@ -53,21 +56,22 @@ func (m *FileManager) HandleFile(fileJson string) (err error) {
 // 格式转换
 func (m *FileManager) Convert() (errs []error) {
 	var wg sync.WaitGroup
-	wg.Add(m.CountUnconverted())
+	wg.Add(m.countUnconverted())
 	c := 0
 	t := time.Now().UnixNano()
+	var b int64
 	for _, file := range m.Files {
 		m.Logger.Infof("m.File: %s", file.Id)
 		f := file
 		if !f.IsConverted {
 			go func(w *sync.WaitGroup) {
-				err := f.Write(m.Config.App.OutDir, m.Config.App.Target)
+				err := f.Write(m.config.App.OutDir, m.config.App.Target)
 				if err != nil {
 					m.Logger.Error(fmt.Sprintf("文件转换失败: %s, %v", f.Name, err))
 					errs = append(errs, fmt.Errorf("文件转换失败: %s", f.Name))
 				} else {
 					f.IsConverted = true
-					m.Logger.Infof("转换成功: %s", path.Join(m.Config.App.OutDir, f.Name+".webp"))
+					m.Logger.Infof("转换成功: %s", path.Join(m.config.App.OutDir, f.Name+".webp"))
 					s, err := f.GetConvertedSize()
 					if err != nil {
 						m.Logger.Errorf("获取不到转换文件大小：%v", err)
@@ -79,21 +83,31 @@ func (m *FileManager) Convert() (errs []error) {
 						"path": strings.Replace(f.ConvertedFile, "\\", "/", -1),
 					})
 					c++
+					s, err = f.GetSavings()
+					if err != nil {
+						m.Logger.Errorf("无法获取文件减少量：%v", err)
+					}
+					b += s
 				}
 				w.Done()
 			}(&wg)
 		}
 	}
 	wg.Wait()
+	// 保存转换量
+	m.stats.SetByteCount(b)
+	// 保存转换的文件数
+	m.stats.SetImageCount(c)
 	m.Runtime.Events.Emit("conversion:stat", map[string]interface{}{
-		"count": c,
-		"time":  (time.Now().UnixNano() - t) / 1000000,
+		"count":   c,
+		"savings": b,
+		"time":    (time.Now().UnixNano() - t) / 1000000,
 	})
 	return errs
 }
 
 // 统计未完成转换的文件
-func (m *FileManager) CountUnconverted() int {
+func (m *FileManager) countUnconverted() int {
 	c := 0
 	for _, file := range m.Files {
 		if !file.IsConverted {

@@ -61,7 +61,7 @@ func (c *Config) SetOutDir() string {
 	dir := c.Runtime.Dialog.SelectDirectory()
 	c.App.OutDir = dir
 	c.Logger.Infof("输出目录: %s", dir)
-	if err := c.Store(); err != nil {
+	if err := c.store(); err != nil {
 		c.Logger.Errorf("配置保存失败：%v", err)
 	}
 	return c.App.OutDir
@@ -80,14 +80,14 @@ func (c *Config) SetTarget(t string) error {
 	c.App.Target = t
 	c.Logger.Infof("文件转换类型: %s", t)
 	// 保存配置
-	if err := c.Store(); err != nil {
+	if err := c.store(); err != nil {
 		return err
 	}
 	return nil
 }
 
 // 保存配置到配置文件
-func (c *Config) Store() error {
+func (c *Config) store() error {
 	js, err := json.Marshal(c.GetAppConfig())
 	if err != nil {
 		c.Logger.Errorf("应用配置解析失败: %v", err)

@@ -5,6 +5,7 @@ import (
 	"magick-app/demo"
 	"magick-app/lib/config"
 	"magick-app/lib/image"
+	"magick-app/lib/stat"
 
 	"github.com/leaanthony/mewn"
 	"github.com/wailsapp/wails"
@@ -36,11 +37,13 @@ func main() {
 		Resizable: true,
 	})
 	newConfig := config.NewConfig()
-	fileManager := image.NewFileManager(newConfig)
+	newStat := stat.NewStat()
+	fileManager := image.NewFileManager(newConfig, newStat)
 
 	app.Bind(basic)
 	app.Bind(myTodoList)
 	app.Bind(newConfig)
+	app.Bind(newStat)
 	app.Bind(fileManager)
 	_ = app.Run()
 }

@@ -42,6 +42,7 @@ export default defineComponent({
 
     onMounted(() => {
       store.dispatch("getConfig");
+      store.dispatch("getStats");
     });
 
     return { currentView, handleViewClose, handleViewSelect };

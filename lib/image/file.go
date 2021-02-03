@@ -19,6 +19,7 @@ type File struct {
 	Id            string `json:"id"`
 	MimeTye       string `json:"type"`
 	Name          string `json:"name"`
+	Size          int64  `json:"size"`
 	ConvertedFile string
 	IsConverted   bool
 	Image         image.Image
@@ -63,13 +64,22 @@ func (f *File) Decode() error {
 // 返回已转换文件的大小
 func (f *File) GetConvertedSize() (int64, error) {
 	if f.ConvertedFile == "" {
-		return 0, errors.New("文件没有对应的转换后的文件")
+		return 0, errors.New("没有对应的转换后的文件")
 	}
 	s, err := os.Stat(f.ConvertedFile)
 	if err != nil {
 		return 0, err
 	}
 	return s.Size(), nil
+}
+
+// 返回原始文件大小与转换后文件大小的增量
+func (f *File) GetSavings() (int64, error) {
+	size, err := f.GetConvertedSize()
+	if err != nil {
+		return 0, err
+	}
+	return size, nil
 }
 
 // jpeg/png => webp

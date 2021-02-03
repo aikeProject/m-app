@@ -30,11 +30,16 @@ interface Config {
   Clear(): Promise<any>;
 }
 
+interface Stat {
+  GetStats(): Promise<any>;
+}
+
 declare interface Window {
   backend: {
     basic(): Promise<string>;
     Todos: Todos;
     FileManager: FileManager;
     Config: Config;
+    Stat: Stat;
   };
 }

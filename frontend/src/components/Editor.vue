@@ -69,13 +69,15 @@
               </p>
             </div>
             <div class="px-3 w-4/12">
-              <p class="font-bold text-2xl">2.25 GB</p>
+              <p class="font-bold text-2xl">
+                {{ getPrettySize(totalStats.byteCount) }}
+              </p>
               <p
                 class="font-medium text-gray-300 text-sm tracking-wider uppercase"
               >
                 All time Savings
               </p>
-              <p class="font-bold text-2xl">2,204</p>
+              <p class="font-bold text-2xl">{{ totalStats.imageCount }}</p>
               <p
                 class="font-medium text-gray-300 text-sm tracking-wider uppercase"
               >
@@ -232,6 +234,9 @@ export default defineComponent({
       return this.files.some(f => {
         return !f.isConverted;
       });
+    },
+    totalStats() {
+      return this.$store.getters.stats;
     }
   },
   methods: {
@@ -295,15 +300,6 @@ export default defineComponent({
     handleFileInput(e: InputEvent) {
       const target = e.target as HTMLInputElement;
       target.files && this.processFileInput(target.files);
-    },
-    /**
-     * 文件大小减小的总量
-     */
-    calcTotalSavings() {
-      this.files.forEach(f => {
-        if (!f.isConverted || f.convertedSize > f.size) return;
-        this.stats.savings += f.size - f.convertedSize;
-      });
     },
     /**
      * 时间戳格式化
@@ -392,6 +388,7 @@ export default defineComponent({
               type,
               ext: fExt(name),
               name: fName(name),
+              size: file.size,
               data: (reader.result as string).split(",")[1]
             })
           );
@@ -434,7 +431,8 @@ export default defineComponent({
       const t = e.time;
       this.stats.count += c;
       this.stats.time += t;
-      this.calcTotalSavings();
+      this.stats.savings += e.savings;
+      this.$store.dispatch("getStats");
       EventBus.emit("notify", {
         msg: `Optimized ${c} ${c > 1 ? "images" : "image"} in ${
           prettyTime(t)[0]
