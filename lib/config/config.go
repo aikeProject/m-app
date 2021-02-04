@@ -59,10 +59,12 @@ func (c *Config) WailsInit(runtime *wails.Runtime) error {
 // 打开对话框，选择输出目录
 func (c *Config) SetOutDir() string {
 	dir := c.Runtime.Dialog.SelectDirectory()
-	c.App.OutDir = dir
-	c.Logger.Infof("输出目录: %s", dir)
-	if err := c.store(); err != nil {
-		c.Logger.Errorf("配置保存失败：%v", err)
+	if dir != "" {
+		c.App.OutDir = dir
+		c.Logger.Infof("输出目录: %s", dir)
+		if err := c.store(); err != nil {
+			c.Logger.Errorf("配置保存失败：%v", err)
+		}
 	}
 	return c.App.OutDir
 }
