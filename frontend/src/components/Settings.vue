@@ -16,7 +16,7 @@
           id="target"
           v-model="config.target"
           class="bg-gray-900 cursor-pointer focus:outline-none hover:text-green mx-4 px-3 py-2 rounded-md ta-color-slow"
-          @change="selectTarget"
+          @change="setConfig"
         >
           <option value="webp">WebP</option>
           <option value="jpg">JPG</option>
@@ -60,6 +60,8 @@
       <div class="flex flex-wrap items-center my-2">
         <label for="prefix">Prefix</label>
         <input
+          v-model="config.prefix"
+          @change="setConfig"
           type="text"
           id="prefix"
           class="bg-gray-900 cursor-pointer focus:outline-none hover:text-green mx-4 px-4 py-2 rounded-md ta-color-slow"
@@ -69,6 +71,8 @@
       <div class="flex flex-wrap items-center my-2">
         <label for="suffix">Suffix</label>
         <input
+          v-model="config.suffix"
+          @change="setConfig"
           type="text"
           id="suffix"
           class="bg-gray-900 cursor-pointer focus:outline-none hover:text-green mx-4 px-4 py-2 rounded-md ta-color-slow"
@@ -104,19 +108,10 @@ export default {
         .catch(err => console.error(err));
     },
     /**
-     * 选择转换格式
+     * 保存配置
      */
-    selectTarget(e) {
-      const target = e.target;
-      console.log(target);
-      window.backend.Config.SetTarget(target.value)
-        .then(res => {
-          console.log(res);
-          this.$store.dispatch("getConfig");
-        })
-        .catch(err => {
-          console.error(err);
-        });
+    setConfig() {
+      this.$store.dispatch("setConfig", this.config);
     },
     // 打开文件输出目录
     openDir() {

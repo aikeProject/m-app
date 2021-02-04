@@ -4,7 +4,9 @@ export default createStore({
   state: {
     config: {
       outDir: "",
-      target: ""
+      target: "",
+      prefix: "",
+      suffix: ""
     },
     stats: {
       byteCount: 0,
@@ -37,7 +39,11 @@ export default createStore({
         .catch(err => console.error(err));
     },
     setConfig(context, config) {
-      context.commit("setConfig", config);
+      window.backend.Config.SetConfig(JSON.stringify(config))
+        .then(() => {
+          context.dispatch("getConfig").then();
+        })
+        .catch(console.error);
     },
     getStats(context) {
       window.backend.Stat.GetStats()

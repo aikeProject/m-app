@@ -17,6 +17,8 @@ const filename = "conf.json"
 type App struct {
 	OutDir string `json:"outDir"`
 	Target string `json:"target"`
+	Prefix string `json:"prefix"`
+	Suffix string `json:"suffix"`
 }
 
 // 应用程序配置
@@ -77,12 +79,16 @@ func (c *Config) OpenOutputDir() error {
 	return nil
 }
 
-// 文件转换的目标类型
-func (c *Config) SetTarget(t string) error {
-	c.App.Target = t
-	c.Logger.Infof("文件转换类型: %s", t)
-	// 保存配置
+// SetConfig sets and stores the given configuration.
+func (c *Config) SetConfig(cfg string) error {
+	a := &App{}
+	if err := json.Unmarshal([]byte(cfg), &a); err != nil {
+		c.Logger.Errorf("failed to unmarshal config: %v", err)
+		return err
+	}
+	c.App = a
 	if err := c.store(); err != nil {
+		c.Logger.Errorf("failed to store config: %v", err)
 		return err
 	}
 	return nil

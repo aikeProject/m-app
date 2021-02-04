@@ -25,7 +25,7 @@ interface AppConfig {
 interface Config {
   SetOutDir(): Promise<any>;
   GetAppConfig(): Promise<AppConfig>;
-  SetTarget(target: string): Promise<any>;
+  SetConfig(config: string): Promise<any>;
   OpenOutputDir(): Promise<any>;
   Clear(): Promise<any>;
 }
