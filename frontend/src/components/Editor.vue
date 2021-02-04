@@ -449,7 +449,7 @@ export default defineComponent({
       EventBus.emit("notify", {
         msg: `Optimized ${c} ${c > 1 ? "images" : "image"} in ${
           prettyTime(t)[0]
-        } ${prettyTime(t)[1].toLowerCase()}.`
+        } ${prettyTime(t)[1]}.`
       });
     });
 

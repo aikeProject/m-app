@@ -15,7 +15,9 @@ export function prettyTime(ms: number) {
   const hours = (ms / (1000 * 60 * 60)).toFixed(1);
   const days = (ms / (1000 * 60 * 60 * 24)).toFixed(1);
 
-  if (Number(seconds) < 60) {
+  if (ms < 1000) {
+    return [ms, "毫秒"];
+  } else if (Number(seconds) < 60) {
     return [seconds, "秒"];
   } else if (Number(minutes) < 60) {
     return [minutes, "分"];
