@@ -10,18 +10,13 @@
     >
       <h2 class="mb-3 text-gray-200 text-xl w-full">General</h2>
       <div class="flex items-center mr-6 my-2 px-4 text-gray-100">
-        <label for="target">Target</label>
-        <select
-          name="target"
-          id="target"
-          v-model="config.target"
-          class="bg-gray-900 cursor-pointer focus:outline-none hover:text-green mx-4 px-3 py-2 rounded-md ta-color-slow"
-          @change="selectTarget"
-        >
-          <option v-for="v in targets" :key="v.value" :value="v.value">{{
-            v.name
-          }}</option>
-        </select>
+        <p class="mr-4">Target</p>
+        <Dropdown
+          :options="targets"
+          :selected="target"
+          v-on:updateOption="selectTarget"
+          class="m-0 text-gray-200"
+        ></Dropdown>
       </div>
       <div class="flex flex-wrap items-center mr-8 my-2 px-4 text-gray-100">
         <p>Destination</p>
@@ -151,18 +146,27 @@
         </div>
       </div>
     </div>
+    <div class="w-full">
+      <button
+        class="btn border-gray-400 focus:outline-none hover:bg-gray-400 hover:text-gray-900 ml-auto ta-slow"
+        @click="restoreDefaults"
+      >
+        Restore Defaults
+      </button>
+    </div>
   </section>
 </template>
 
 <script>
-// import dropdown from "vue-dropdowns";
+import Dropdown from "./Dropdown";
 import VueSlider from "vue-slider-component";
 import "vue-slider-component/theme/antd.css";
 
 export default {
   name: "Settings",
   components: {
-    VueSlider
+    VueSlider,
+    Dropdown
   },
   data() {
     return {
@@ -170,7 +174,8 @@ export default {
         { name: "WebP", value: "webp" },
         { name: "JPG", value: "jpg" },
         { name: "PNG", value: "png" }
-      ]
+      ],
+      value: 0
     };
   },
   computed: {
@@ -179,6 +184,9 @@ export default {
      */
     config() {
       return this.$store.getters.config;
+    },
+    target() {
+      return this.targets.find(t => this.config.target === t.value);
     }
   },
   methods: {
@@ -196,7 +204,7 @@ export default {
     },
     selectTarget(e) {
       this.$store
-        .dispatch("setConfigProp", { key: "target", value: e.target.value })
+        .dispatch("setConfigProp", { key: "target", value: e.value })
         .then(() => {
           this.setConfig();
         })
@@ -228,6 +236,16 @@ export default {
       window.backend.Config.OpenOutputDir()
         .then(res => console.log(res))
         .catch(err => console.error(err));
+    },
+    // 重置
+    restoreDefaults() {
+      window.backend.Config.RestoreDefaults()
+        .then(() => {
+          this.$store.dispatch("getConfig");
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   }
 };

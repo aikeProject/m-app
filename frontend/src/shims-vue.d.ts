@@ -31,6 +31,7 @@ interface Config {
   SetConfig(config: string): Promise<any>;
   OpenOutputDir(): Promise<any>;
   Clear(): Promise<any>;
+  RestoreDefaults(): Promise<any>;
 }
 
 interface Stat {

@@ -123,6 +123,19 @@ func (c *Config) store() error {
 	return nil
 }
 
+// 重置为默认配置
+func (c Config) RestoreDefaults() (err error) {
+	app, err := defaults()
+	if err != nil {
+		return err
+	}
+	c.App = app
+	if err := c.store(); err != nil {
+		return err
+	}
+	return nil
+}
+
 // 默认配置
 func defaults() (*App, error) {
 	a := &App{
