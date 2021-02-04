@@ -16,11 +16,11 @@
           id="target"
           v-model="config.target"
           class="bg-gray-900 cursor-pointer focus:outline-none hover:text-green mx-4 px-3 py-2 rounded-md ta-color-slow"
-          @change="setConfig"
+          @change="selectTarget"
         >
-          <option value="webp">WebP</option>
-          <option value="jpg">JPG</option>
-          <option value="png">PNG</option>
+          <option v-for="v in targets" :key="v.value" :value="v.value">{{
+            v.name
+          }}</option>
         </select>
       </div>
       <div class="flex flex-wrap items-center mr-8 my-2">
@@ -84,8 +84,22 @@
 </template>
 
 <script>
+// import dropdown from "vue-dropdowns";
+// import VueSlider from "vue-slider-component";
+import "vue-slider-component/theme/antd.css";
+
 export default {
   name: "Settings",
+  components: {},
+  data() {
+    return {
+      targets: [
+        { name: "WebP", value: "webp" },
+        { name: "JPG", value: "jpg" },
+        { name: "PNG", value: "png" }
+      ]
+    };
+  },
   computed: {
     /**
      * 从状态管理中获取config配置参数
@@ -106,6 +120,16 @@ export default {
           this.$store.dispatch("getConfig");
         })
         .catch(err => console.error(err));
+    },
+    selectTarget(e) {
+      this.$store
+        .dispatch("setConfigProp", { key: "target", value: e.target.value })
+        .then(() => {
+          this.setConfig();
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
     /**
      * 保存配置

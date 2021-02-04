@@ -1,5 +1,12 @@
 import { createStore } from "vuex";
 
+type ConfigKey = "outDir" | "target" | "prefix" | "suffix";
+
+interface ConfigProp {
+  key: ConfigKey;
+  value: string;
+}
+
 export default createStore({
   state: {
     config: {
@@ -27,6 +34,9 @@ export default createStore({
     },
     setStats(state, s) {
       state.stats = s;
+    },
+    setConfigProp(state, payload: ConfigProp) {
+      state.config[payload.key] = payload.value;
     }
   },
   actions: {
@@ -56,6 +66,9 @@ export default createStore({
     },
     setStats(context, s) {
       context.commit("setStats", s);
+    },
+    setConfigProp(context, payload: ConfigProp) {
+      context.commit("setConfigProp", payload);
     }
   },
   modules: {}
