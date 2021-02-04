@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-900 flex h-full">
     <Sidebar v-on:select-view="handleViewSelect" />
-    <transition name="fade-fast" mode="out-in">
+    <transition name="fade" mode="out-in">
       <keep-alive>
         <component :is="currentView" v-on:close-view="handleViewClose" />
       </keep-alive>
