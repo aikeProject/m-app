@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/jpeg"
 	"io/ioutil"
+	"magick-app/lib/config"
 	"magick-app/lib/png"
 	"magick-app/lib/webp"
 	"os"
@@ -83,10 +84,10 @@ func (f *File) GetSavings() (int64, error) {
 }
 
 // jpeg/png => webp
-func (f *File) Write(dir string, target string) (err error) {
+func (f *File) Write(c *config.Config) (err error) {
 	var buf bytes.Buffer
 
-	switch target {
+	switch c.App.Target {
 	case "jpg":
 		err = jpeg.Encode(&buf, f.Image, &jpeg.Options{Quality: 70})
 	case "png":
@@ -95,7 +96,7 @@ func (f *File) Write(dir string, target string) (err error) {
 		buf, err = webp.EncodeWebp(f.Image)
 	}
 
-	dest := path.Join(dir, f.Name+"."+target)
+	dest := path.Join(c.App.OutDir, c.App.Prefix+f.Name+c.App.Suffix+"."+c.App.Target)
 
 	if err != nil {
 		return err

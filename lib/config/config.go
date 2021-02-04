@@ -15,9 +15,13 @@ const filename = "conf.json"
 
 // 本地配置
 type App struct {
+	// 文件保存目录
 	OutDir string `json:"outDir"`
+	// 文件目标类型 png/jpg/webp...
 	Target string `json:"target"`
+	// 文件名前缀
 	Prefix string `json:"prefix"`
+	// 文件名后缀
 	Suffix string `json:"suffix"`
 }
 
