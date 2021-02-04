@@ -124,7 +124,7 @@ func (c *Config) store() error {
 }
 
 // 重置为默认配置
-func (c Config) RestoreDefaults() (err error) {
+func (c *Config) RestoreDefaults() (err error) {
 	app, err := defaults()
 	if err != nil {
 		return err
