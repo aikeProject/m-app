@@ -3,7 +3,10 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"magick-app/lib/jpeg"
 	"magick-app/lib/localstore"
+	"magick-app/lib/png"
+	"magick-app/lib/webp"
 	"os"
 	"path"
 	"path/filepath"
@@ -14,15 +17,18 @@ import (
 const filename = "conf.json"
 
 // 本地配置
+// OutDir 文件保存目录
+// Target 文件目标类型 png/jpg/webp...
+// Prefix 文件名前缀
+// Suffix 文件名结尾，不是扩展名
 type App struct {
-	// 文件保存目录
-	OutDir string `json:"outDir"`
-	// 文件目标类型 png/jpg/webp...
-	Target string `json:"target"`
-	// 文件名前缀
-	Prefix string `json:"prefix"`
-	// 文件名结尾，不是扩展名
-	Suffix string `json:"suffix"`
+	OutDir  string        `json:"outDir"`
+	Target  string        `json:"target"`
+	Prefix  string        `json:"prefix"`
+	Suffix  string        `json:"suffix"`
+	JpegOpt *jpeg.Options `json:"jpegOpt"`
+	PngOpt  *png.Options  `json:"pngOpt"`
+	WebpOpt *webp.Options `json:"webpOpt"`
 }
 
 // 应用程序配置
@@ -50,10 +56,13 @@ func NewConfig() *Config {
 // 获取配置
 func (c *Config) GetAppConfig() map[string]interface{} {
 	return map[string]interface{}{
-		"outDir": c.App.OutDir,
-		"target": c.App.Target,
-		"prefix": c.App.Prefix,
-		"suffix": c.App.Suffix,
+		"outDir":  c.App.OutDir,
+		"target":  c.App.Target,
+		"prefix":  c.App.Prefix,
+		"suffix":  c.App.Suffix,
+		"jpegOpt": c.App.JpegOpt,
+		"pngOpt":  c.App.PngOpt,
+		"webpOpt": c.App.WebpOpt,
 	}
 }
 
@@ -116,7 +125,12 @@ func (c *Config) store() error {
 
 // 默认配置
 func defaults() (*App, error) {
-	a := &App{Target: "webp"}
+	a := &App{
+		Target:  "webp",
+		JpegOpt: &jpeg.Options{Quality: 80},
+		PngOpt:  &png.Options{Quality: 80},
+		WebpOpt: &webp.Options{Lossless: false, Quality: 80},
+	}
 	ud, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Printf("failed to get user directory: %v", err)
