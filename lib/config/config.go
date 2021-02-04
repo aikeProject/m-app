@@ -21,7 +21,7 @@ type App struct {
 	Target string `json:"target"`
 	// 文件名前缀
 	Prefix string `json:"prefix"`
-	// 文件名后缀
+	// 文件名结尾，不是扩展名
 	Suffix string `json:"suffix"`
 }
 
@@ -52,6 +52,8 @@ func (c *Config) GetAppConfig() map[string]interface{} {
 	return map[string]interface{}{
 		"outDir": c.App.OutDir,
 		"target": c.App.Target,
+		"prefix": c.App.Prefix,
+		"suffix": c.App.Suffix,
 	}
 }
 
