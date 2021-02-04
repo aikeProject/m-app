@@ -9,7 +9,7 @@
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
       <h2 class="mb-3 text-gray-200 text-xl w-full">General</h2>
-      <div class="flex items-center mr-6 my-2">
+      <div class="flex items-center mr-6 my-2 px-4 text-gray-100">
         <label for="target">Target</label>
         <select
           name="target"
@@ -23,7 +23,7 @@
           }}</option>
         </select>
       </div>
-      <div class="flex flex-wrap items-center mr-8 my-2">
+      <div class="flex flex-wrap items-center mr-8 my-2 px-4 text-gray-100">
         <p>Destination</p>
         <p
           class="bg-gray-900 cursor-pointer font-mono hover:text-green mx-4 px-4 py-2 rounded-md ta-color-slow"
@@ -57,7 +57,7 @@
           </svg>
         </button>
       </div>
-      <div class="flex flex-wrap items-center my-2">
+      <div class="flex flex-wrap items-center my-2 px-4 text-gray-100">
         <label for="prefix">Prefix</label>
         <input
           v-model="config.prefix"
@@ -68,7 +68,7 @@
           maxlength="16"
         />
       </div>
-      <div class="flex flex-wrap items-center my-2">
+      <div class="flex flex-wrap items-center my-2 px-4 text-gray-100">
         <label for="suffix">Suffix</label>
         <input
           v-model="config.suffix"
@@ -80,17 +80,90 @@
         />
       </div>
     </div>
+    <div
+      class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
+    >
+      <h2 class="mb-3 text-gray-200 text-xl w-full">WebP</h2>
+      <div class="px-4 text-gray-100 w-1/2">
+        <div class="flex items-center w-full">
+          <p class="mr-6">Quality</p>
+          <div class="w-full">
+            <vue-slider v-model="config.webpOpt.quality" @change="setConfig" />
+          </div>
+        </div>
+      </div>
+      <div class="px-4 text-gray-100 w-1/2">
+        <div class="flex items-center w-full">
+          <p class="mr-4">Lossless</p>
+          <div
+            @click="toggleWebpLossless"
+            class="bg-gray-900 check-wrapper flex items-center justify-center rounded-md"
+          >
+            <transition name="fade" mode="out-in">
+              <svg
+                v-if="config.webpOpt.lossless"
+                version="1.1"
+                id="check-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                viewBox="0 0 24 24"
+                style="enable-background:new 0 0 24 24;"
+                width="24"
+                height="24"
+                xml:space="preserve"
+              >
+                <path
+                  fill="#07FDBC"
+                  d="M10,15.6l-3.3-3.3l-1.4,1.4l4.7,4.7l9.7-9.7l-1.4-1.4L10,15.6z"
+                />
+              </svg>
+            </transition>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
+    >
+      <h2 class="mb-3 text-gray-200 text-xl w-full">JPEG</h2>
+      <div class="px-4 text-gray-100 w-1/2">
+        <div class="flex items-center w-full">
+          <p class="mr-6">Quality</p>
+          <div class="w-full">
+            <vue-slider v-model="config.jpegOpt.quality" @change="setConfig" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
+    >
+      <h2 class="mb-3 text-gray-200 text-xl w-full">PNG</h2>
+      <div class="px-4 text-gray-100 w-1/2">
+        <div class="flex items-center w-full">
+          <p class="mr-6">Quality</p>
+          <div class="w-full">
+            <vue-slider v-model="config.pngOpt.quality" @change="setConfig" />
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
 // import dropdown from "vue-dropdowns";
-// import VueSlider from "vue-slider-component";
+import VueSlider from "vue-slider-component";
 import "vue-slider-component/theme/antd.css";
 
 export default {
   name: "Settings",
-  components: {},
+  components: {
+    VueSlider
+  },
   data() {
     return {
       targets: [
@@ -137,6 +210,19 @@ export default {
     setConfig() {
       this.$store.dispatch("setConfig", this.config);
     },
+    /**
+     * 无损/有损
+     */
+    toggleWebpLossless() {
+      this.$store
+        .dispatch("toggleWebpLossless")
+        .then(() => {
+          this.setConfig();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
     // 打开文件输出目录
     openDir() {
       window.backend.Config.OpenOutputDir()
@@ -158,5 +244,12 @@ button:hover > svg > path {
 
 input:focus {
   color: #07fdbc;
+}
+
+.check-wrapper {
+  border: 2px solid transparent;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
 }
 </style>

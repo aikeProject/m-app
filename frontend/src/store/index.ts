@@ -1,10 +1,17 @@
 import { createStore } from "vuex";
 
-type ConfigKey = "outDir" | "target" | "prefix" | "suffix";
+type ConfigKey =
+  | "outDir"
+  | "target"
+  | "prefix"
+  | "suffix"
+  | "jpegOpt"
+  | "pngOpt"
+  | "webpOpt";
 
 interface ConfigProp {
   key: ConfigKey;
-  value: string;
+  value: any;
 }
 
 export default createStore({
@@ -13,7 +20,10 @@ export default createStore({
       outDir: "",
       target: "",
       prefix: "",
-      suffix: ""
+      suffix: "",
+      jpegOpt: { quality: 0 },
+      pngOpt: { quality: 0 },
+      webpOpt: { lossless: false, quality: 0 }
     },
     stats: {
       byteCount: 0,
@@ -37,6 +47,9 @@ export default createStore({
     },
     setConfigProp(state, payload: ConfigProp) {
       state.config[payload.key] = payload.value;
+    },
+    toggleWebpLossless(state) {
+      state.config.webpOpt.lossless = !state.config.webpOpt.lossless;
     }
   },
   actions: {
@@ -44,7 +57,12 @@ export default createStore({
       window.backend.Config.GetAppConfig()
         .then(config => {
           console.log("config", config);
-          context.commit("setConfig", config);
+          context.commit("setConfig", {
+            ...config,
+            jpegOpt: config.jpegOpt || { quality: 0 },
+            pngOpt: config.pngOpt || { quality: 0 },
+            webpOpt: config.webpOpt || { lossless: false, quality: 0 }
+          });
         })
         .catch(err => console.error(err));
     },
@@ -69,6 +87,9 @@ export default createStore({
     },
     setConfigProp(context, payload: ConfigProp) {
       context.commit("setConfigProp", payload);
+    },
+    toggleWebpLossless(context) {
+      context.commit("toggleWebpLossless");
     }
   },
   modules: {}

@@ -18,6 +18,9 @@ interface FileManager {
 }
 
 interface AppConfig {
+  webpOpt: { lossless: boolean; quality: number };
+  pngOpt: { quality: number };
+  jpegOpt: { quality: number };
   outDir: string;
   target: string;
 }
