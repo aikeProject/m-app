@@ -111,17 +111,17 @@
             @click="convert"
             :disabled="!canConvert"
           >
-            转换格式
+            {{ optBtnTxt }}
           </button>
           <button
             class="btn focus:outline-none ta-slow"
             :class="
-              files.length > 0
+              canClear
                 ? 'border-gray-400 hover:bg-gray-400 hover:text-gray-900'
                 : 'btn--disabled'
             "
             @click="clear"
-            :disabled="files.length === 0"
+            :disabled="!canClear"
           >
             清空
           </button>
@@ -175,8 +175,18 @@
           </thead>
           <tbody>
             <tr v-for="(file, i) in files" :key="`${i}-${file.name}`">
-              <td class="cell-l">{{ file.filename }}</td>
-              <td>{{ getPrettySize(file.size) }}</td>
+              <td
+                class="cell-l ta"
+                :class="file.isProcessed ? 'text-gray-200' : 'text-gray-400'"
+              >
+                {{ file.filename }}
+              </td>
+              <td
+                class="ta"
+                :class="file.isProcessed ? 'text-gray-200' : 'text-gray-400'"
+              >
+                {{ getPrettySize(file.size) }}
+              </td>
               <td>
                 {{ getPrettySize(file.convertedSize) }}
               </td>
@@ -247,8 +257,28 @@ export default defineComponent({
         return !f.isConverted;
       });
     },
+    // 返回统计数据
     totalStats() {
       return this.$store.getters.stats;
+    },
+    // 是否为处理中的状态
+    filesPending(): boolean {
+      if (this.files.length === 0) return false;
+      return this.files.some(f => !f.isProcessed);
+    },
+    /**
+     * 状态
+     */
+    optBtnTxt(): string {
+      const d = "优化";
+      if (this.files.length === 0) return d;
+      if (this.filesPending) return "处理中...";
+      return d;
+    },
+    // 是否能清空
+    canClear(): boolean {
+      if (this.files.length === 0) return false;
+      return !this.filesPending;
     }
   },
   methods: {
@@ -380,9 +410,10 @@ export default defineComponent({
           name,
           size,
           filename: f.name,
-          isConverted: false,
           convertedSize: 0,
-          convertedPath: ""
+          convertedPath: "",
+          isConverted: false,
+          isProcessed: false
         });
       });
       // eslint-disable-next-line
@@ -403,7 +434,13 @@ export default defineComponent({
               size: file.size,
               data: (reader.result as string).split(",")[1]
             })
-          );
+          )
+            .then(() => {
+              const file = this.getFileById(id);
+              // 文件处理完毕了
+              file && (file.isProcessed = true);
+            })
+            .catch(console.error);
         }
       };
       reader.readAsDataURL(file);

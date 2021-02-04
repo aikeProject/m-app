@@ -12,4 +12,5 @@ export interface CFile {
   name: string;
   size: number;
   convertedSize: 0;
+  isProcessed: boolean;
 }
