@@ -39,7 +39,6 @@ export default createStore({
         .catch(err => console.error(err));
     },
     setConfig(context, config) {
-      console.log("config", config);
       window.backend.Config.SetConfig(JSON.stringify(config))
         .then(() => {
           context.dispatch("getConfig").then();
