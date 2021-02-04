@@ -167,7 +167,7 @@
               <!--              结果-->
               <!--            </th>-->
               <th
-                class="font-medium text-center pl-3 pt-6 text-gray-400 text-left text-sm tracking-wider uppercase"
+                class="font-medium text-center pl-3 text-gray-400 text-left text-sm tracking-wider uppercase"
               >
                 状态
               </th>
