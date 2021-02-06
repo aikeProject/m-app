@@ -14,6 +14,7 @@
         viewBox="0 0 19.6 20"
         enable-background="new 0 0 19.6 20"
         xml:space="preserve"
+        :class="{ active: active === 'Settings' }"
       >
         <path
           fill="#b3b3b3"
@@ -31,6 +32,7 @@
       class="cursor-pointer mb-2 p-2 rounded-full w-10 h-10"
     >
       <svg
+        :class="{ active: active === 'About' }"
         version="1.1"
         id="info"
         xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +59,12 @@
 <script>
 export default {
   name: "Sidebar",
+  props: {
+    active: {
+      type: String,
+      required: true
+    }
+  },
   methods: {
     selectView(v) {
       this.$emit("select-view", v);
@@ -76,8 +84,13 @@ export default {
   transition: fill 0.3s cubic-bezier(0.07, 0.95, 0, 1);
 }
 
-div:hover > #cog {
-  transform: rotate(45deg);
+#cog.active {
+  transform: rotate(270deg);
+}
+
+#cog.active path,
+#info.active path {
+  fill: #27ffa7;
 }
 
 div:hover > #cog path,
