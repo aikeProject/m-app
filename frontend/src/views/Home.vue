@@ -35,7 +35,11 @@ export default defineComponent({
     };
 
     const handleViewSelect = (e: string) => {
-      currentView.value = e;
+      if (currentView.value === e) {
+        currentView.value = "Editor";
+      } else {
+        currentView.value = e;
+      }
     };
 
     onMounted(() => {
