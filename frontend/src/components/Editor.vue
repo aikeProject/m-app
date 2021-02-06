@@ -271,6 +271,7 @@ export default defineComponent({
     return {
       files: [] as CFile[],
       isDragging: false,
+      isConverting: false,
       headerHeight: 0,
       stats: {
         count: 0,
@@ -281,7 +282,7 @@ export default defineComponent({
   },
   computed: {
     canConvert(): boolean {
-      if (this.files.length === 0) return false;
+      if (this.files.length === 0 || this.isConverting) return false;
       return this.files.some(f => {
         return !f.isConverted;
       });
@@ -327,6 +328,7 @@ export default defineComponent({
      * eg: .jpg -> .webp
      */
     convert() {
+      this.isConverting = true;
       window.backend.FileManager.Convert()
         .then(result => {
           console.log(result);
@@ -528,6 +530,8 @@ export default defineComponent({
           prettyTime(t)[0]
         } ${prettyTime(t)[1]}.`
       });
+
+      this.isConverting = false;
     });
 
     // eslint-disable-next-line
