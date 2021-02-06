@@ -45,7 +45,7 @@
             <div class="px-3 w-5/12">
               <div v-if="stats.savings > 0">
                 <h2
-                  class="font-bold leading-none text-5xl text-green-default tracking-tight"
+                  class="font-bold leading-none text-5xl text-pink-default tracking-tight"
                 >
                   {{ getPrettySize(stats.savings) }}
                 </h2>
@@ -65,13 +65,15 @@
               </div>
             </div>
             <div class="px-3 w-3/12">
-              <p class="font-bold text-2xl">{{ stats.count }}</p>
+              <p class="font-bold text-2xl text-blue-default">
+                {{ stats.count }}
+              </p>
               <p
                 class="font-medium text-gray-300 text-sm tracking-wider uppercase"
               >
                 {{ stats.count > 1 ? "Images" : "Image" }}
               </p>
-              <p class="font-bold text-2xl">
+              <p class="font-bold text-2xl text-yellow-default">
                 {{ getPrettyTime(stats.time)[0] }}
               </p>
               <p
@@ -81,7 +83,7 @@
               </p>
             </div>
             <div class="px-3 w-4/12">
-              <p class="font-bold text-2xl">
+              <p class="font-bold text-2xl text-pink-default">
                 {{ getPrettySize(totalStats.byteCount) }}
               </p>
               <p
@@ -89,7 +91,9 @@
               >
                 All time Savings
               </p>
-              <p class="font-bold text-2xl">{{ totalStats.imageCount }}</p>
+              <p class="font-bold text-2xl text-pink-default">
+                {{ totalStats.imageCount }}
+              </p>
               <p
                 class="font-medium text-gray-300 text-sm tracking-wider uppercase"
               >
@@ -105,7 +109,7 @@
             class="btn focus:outline-none ta-slow"
             :class="
               canConvert
-                ? 'border-yellow-default hover:bg-yellow-default hover:text-gray-900 text-gray-200'
+                ? 'border-green-default hover:bg-green-default hover:text-gray-900 text-gray-200'
                 : 'btn--disabled'
             "
             @click="convert"
@@ -223,7 +227,7 @@
                     xml:space="preserve"
                   >
                     <path
-                      fill="#07FDBC"
+                      fill="#27ffa7"
                       d="M10,0C4.5,0,0,4.5,0,10s4.5,10,10,10s10-4.5,10-10S15.5,0,10,0z M8,14.4l-3.7-3.7l1.4-1.4L8,11.6l5.3-5.3
                             l1.4,1.4L8,14.4z"
                     />
@@ -608,5 +612,5 @@ td p.cell-r
 
 
 .drop-zone:hover > svg path
-  fill #07fdbc
+  fill #27ffa7
 </style>

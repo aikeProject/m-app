@@ -45,7 +45,7 @@
                 xml:space="preserve"
               >
                 <path
-                  fill="#07FDBC"
+                  fill="#27ffa7"
                   d="M10,15.6l-3.3-3.3l-1.4,1.4l4.7,4.7l9.7-9.7l-1.4-1.4L10,15.6z"
                 />
               </svg>
