@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex flex-col items-center pt-10 w-24">
+  <nav class="bg-gray-900 flex flex-col items-center pt-10 w-24 z-40">
     <div
       @click="selectView('Settings')"
       class="border-2 border-gray-700 p-2 rounded-full w-10 h-10 cursor-pointer"

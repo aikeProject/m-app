@@ -606,6 +606,7 @@ td p.cell-l
 td p.cell-r
   border-top-right-radius 6px
   border-bottom-right-radius 6px
+  margin-right: 1rem;
 
 .drop-zone > svg path
   transition fill 600ms cubic-bezier(.07, .95, 0, 1)
