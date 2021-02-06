@@ -28,8 +28,8 @@ func main() {
 	}
 
 	app := wails.CreateApp(&wails.AppConfig{
-		Width:     1024,
-		Height:    768,
+		Width:     1200,
+		Height:    742,
 		Title:     "magick-app",
 		JS:        js,
 		CSS:       css,
