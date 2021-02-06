@@ -1,7 +1,7 @@
 <template>
   <div class="w-full p-10">
-    <header class="border-b-2 border-gray-800 flex flex-wrap">
-      <div class="w-5/12">
+    <header class="border-b-2 border-gray-800 flex flex-wrap" ref="header">
+      <div class="w-full md:w-1/2 lg:w-5/12">
         <div
           class="bg-gray-800 border-2 border-dashed cursor-pointer drop-zone flex flex-col items-center justify-center py-10 ta-slow rounded-sm"
           :class="isDragging ? 'border-green-default' : 'border-gray-400'"
@@ -30,7 +30,7 @@
           <p class="mt-6 text-gray-200">拖拽文件到此处或选择文件</p>
         </div>
       </div>
-      <div class="pl-6 w-7/12">
+      <div class="lg:w-7/12 md:pl-6 md:w-1/2 my-3 w-full">
         <transition name="fade" mode="out-in">
           <div
             v-if="!stats.time"
@@ -42,10 +42,10 @@
             </h2>
           </div>
           <div v-else key="stats" class="flex flex-wrap items-end h-full">
-            <div class="px-3 w-5/12">
+            <div class="px-3 w-full lg:w-5/12">
               <div v-if="stats.savings > 0">
                 <h2
-                  class="font-bold leading-none text-5xl text-pink-default tracking-tight"
+                  class="font-bold leading-none text-4xl md:text-5xl text-pink-default tracking-tight"
                 >
                   {{ getPrettySize(stats.savings) }}
                 </h2>
@@ -64,47 +64,57 @@
                 </p>
               </div>
             </div>
-            <div class="px-3 w-3/12">
-              <p class="font-bold text-2xl text-blue-default">
-                {{ stats.count }}
-              </p>
-              <p
-                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
-              >
-                {{ stats.count > 1 ? "Images" : "Image" }}
-              </p>
-              <p class="font-bold text-2xl text-yellow-default">
-                {{ getPrettyTime(stats.time)[0] }}
-              </p>
-              <p
-                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
-              >
-                {{ getPrettyTime(stats.time)[1] }}
-              </p>
+            <div class="flex lg:flex-col justify-between px-3 w-full lg:w-3/12">
+              <div class="w-1/2 lg:w-full">
+                <p class="font-bold text-xl lg:text-2xl text-blue">
+                  {{ stats.count }}
+                </p>
+                <p
+                  class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+                >
+                  {{ stats.count > 1 ? "Images" : "Image" }}
+                </p>
+              </div>
+              <div class="w-1/2 lg:w-full">
+                <p class="font-bold text-xl lg:text-2xl text-yellow">
+                  {{ getPrettyTime(stats.time)[0] }}
+                </p>
+                <p
+                  class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+                >
+                  {{ getPrettyTime(stats.time)[1] }}
+                </p>
+              </div>
             </div>
-            <div class="px-3 w-4/12">
-              <p class="font-bold text-2xl text-pink-default">
-                {{ getPrettySize(totalStats.byteCount) }}
-              </p>
-              <p
-                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
-              >
-                All time Savings
-              </p>
-              <p class="font-bold text-2xl text-pink-default">
-                {{ totalStats.imageCount }}
-              </p>
-              <p
-                class="font-medium text-gray-300 text-sm tracking-wider uppercase"
-              >
-                All time Images
-              </p>
+            <div class="flex lg:flex-col justify-between px-3 w-full lg:w-4/12">
+              <div class="w-1/2 lg:w-full">
+                <p class="font-bold text-xl lg:text-2xl text-pink">
+                  {{ getPrettySize(totalStats.byteCount) }}
+                </p>
+                <p
+                  class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+                >
+                  All time Savings
+                </p>
+              </div>
+              <div class="w-1/2 lg:w-full">
+                <p class="font-bold text-xl lg:text-2xl text-purple">
+                  {{ totalStats.imageCount }}
+                </p>
+                <p
+                  class="font-medium text-gray-300 text-sm tracking-wider uppercase"
+                >
+                  All time Images
+                </p>
+              </div>
             </div>
           </div>
         </transition>
       </div>
       <footer class="w-full">
-        <section class="flex justify-between py-6 w-5/12">
+        <section
+          class="flex justify-between lg:w-5/12 md:w-1/2 py-3 md:py-6 w-full"
+        >
           <button
             class="btn focus:outline-none ta-slow"
             :class="
@@ -141,7 +151,11 @@
       ref="fileInput"
     />
     <transition name="fade" mode="out-in">
-      <div v-if="files.length > 0" class="table-wrapper">
+      <div
+        v-if="files.length > 0"
+        class="table-wrapper"
+        :style="{ height: `calc(100vh - ${headerHeight + 80}px)` }"
+      >
         <table class="table-auto w-full text-left whitespace-nowrap">
           <thead>
             <tr>
@@ -257,6 +271,7 @@ export default defineComponent({
     return {
       files: [] as CFile[],
       isDragging: false,
+      headerHeight: 0,
       stats: {
         count: 0,
         savings: 0,
@@ -296,6 +311,17 @@ export default defineComponent({
     }
   },
   methods: {
+    /**
+     * handleWinResize calculates the height of the table based on the height
+     * of the header.
+     */
+    handleWinResize() {
+      // eslint-disable-next-line
+      // @ts-ignore
+      const hh = this.$refs["header"].clientHeight;
+      if (hh === this.headerHeight) return;
+      this.headerHeight = hh;
+    },
     /**
      * 图片格式转换
      * eg: .jpg -> .webp
@@ -567,6 +593,9 @@ export default defineComponent({
       },
       false
     );
+
+    window.addEventListener("resize", this.handleWinResize);
+    this.handleWinResize();
   }
 });
 </script>
@@ -575,7 +604,6 @@ export default defineComponent({
 <style scoped lang="stylus">
 .table-wrapper
   min-height 80px
-  height calc(100vh - 344px)
   max-height calc(100vh / 2)
   overflow auto
 
