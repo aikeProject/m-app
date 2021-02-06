@@ -22,13 +22,13 @@ html {
 }
 
 body {
-    scrollbar-base-color: #000;
-    scrollbar-face-color: #fff;
-    scrollbar-3dlight-color: #000;
-    scrollbar-highlight-color: #000;
-    scrollbar-track-color: #000;
-    scrollbar-arrow-color: #000;
-    scrollbar-shadow-color: #fff;
+    scrollbar-base-color: #18181f;
+    scrollbar-face-color: #212128;
+    scrollbar-3dlight-color: #18181f;
+    scrollbar-highlight-color: #18181f;
+    scrollbar-track-color: #18181f;
+    scrollbar-arrow-color: #18181f;
+    scrollbar-shadow-color: #212128;
     height: 100%;
 }
 
