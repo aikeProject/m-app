@@ -6,6 +6,7 @@ import (
 	"magick-app/lib/config"
 	"magick-app/lib/stat"
 	"path"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -103,6 +104,7 @@ func (m *FileManager) Convert() (errs []error) {
 		"savings": b,
 		"time":    (time.Now().UnixNano() - t) / 1000000,
 	})
+	m.Clear()
 	return errs
 }
 
@@ -120,6 +122,7 @@ func (m *FileManager) countUnconverted() int {
 // 清空选择的文件
 func (m *FileManager) Clear() {
 	m.Files = nil
+	debug.FreeOSMemory()
 }
 
 // 打开文件
