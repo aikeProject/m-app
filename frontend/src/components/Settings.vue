@@ -8,7 +8,7 @@
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-green-default text-xl w-full">General</h2>
+      <h2 class="mb-3 text-gray-100 text-xl w-full">General</h2>
       <div class="flex items-center mr-6 my-2 px-4 text-gray-100">
         <p class="mr-4">Target</p>
         <Dropdown
@@ -78,16 +78,12 @@
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-yellow-default text-xl w-full">WebP</h2>
+      <h2 class="mb-3 text-gray-100 text-xl w-full">WebP</h2>
       <div class="px-4 text-gray-100 w-1/2">
         <div class="flex items-center w-full">
           <p class="mr-6">Quality</p>
           <div class="w-full">
-            <vue-slider
-              v-model="config.webpOpt.quality"
-              @change="setConfig"
-              class="slider-yellow"
-            />
+            <vue-slider v-model="config.webpOpt.quality" @change="setConfig" />
           </div>
         </div>
       </div>
@@ -113,7 +109,7 @@
                 xml:space="preserve"
               >
                 <path
-                  fill="#ffe027"
+                  fill="#27ffa7"
                   d="M10,15.6l-3.3-3.3l-1.4,1.4l4.7,4.7l9.7-9.7l-1.4-1.4L10,15.6z"
                 />
               </svg>
@@ -126,16 +122,12 @@
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-gray-400 text-xl w-full">JPEG</h2>
+      <h2 class="mb-3 text-gray-100 text-xl w-full">JPEG</h2>
       <div class="px-4 text-gray-100 w-1/2">
         <div class="flex items-center w-full">
           <p class="mr-6">Quality</p>
           <div class="w-full">
-            <vue-slider
-              v-model="config.jpegOpt.quality"
-              @change="setConfig"
-              class="slider-purple"
-            />
+            <vue-slider v-model="config.jpegOpt.quality" @change="setConfig" />
           </div>
         </div>
       </div>
@@ -144,16 +136,12 @@
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-blue-default text-xl w-full">PNG</h2>
+      <h2 class="mb-3 text-gray-100 text-xl w-full">PNG</h2>
       <div class="px-4 text-gray-100 w-1/2">
         <div class="flex items-center w-full">
           <p class="mr-6">Quality</p>
           <div class="w-full">
-            <vue-slider
-              v-model="config.pngOpt.quality"
-              @change="setConfig"
-              class="slider-blue"
-            />
+            <vue-slider v-model="config.pngOpt.quality" @change="setConfig" />
           </div>
         </div>
       </div>
