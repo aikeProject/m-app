@@ -1,7 +1,7 @@
 <template>
   <section class="bg-gray-800 overflow-y-auto p-10 w-full">
     <header class="flex items-center justify-between w-full">
-      <h1 class="font-medium text-2xl text-gray-100">About</h1>
+      <h1 class="font-medium text-2xl text-gray-200">About</h1>
       <BtnClose @click="closeView" />
     </header>
     <div class="flex flex-wrap items-center justify-center pt-16 w-full">
@@ -418,8 +418,7 @@ export default {
 
 <style scoped>
 span {
-  cursor: pointer;
-  box-shadow: 0 2px #27ffa7;
+  box-shadow: 0 1px #27ffa7;
 }
 .st0 {
   fill: #f411ba;

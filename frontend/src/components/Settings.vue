@@ -1,7 +1,7 @@
 <template>
   <section class="bg-gray-800 p-10 w-full">
     <header class="flex items-center justify-between w-full">
-      <h1 class="font-medium text-2xl text-gray-100">Options</h1>
+      <h1 class="font-medium text-2xl text-gray-200">Options</h1>
       <BtnClose @click="closeView" />
     </header>
 
