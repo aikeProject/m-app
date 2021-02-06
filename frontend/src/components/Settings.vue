@@ -1,14 +1,14 @@
 <template>
   <section class="bg-gray-800 p-10 w-full">
     <header class="flex items-center justify-between w-full">
-      <h1 class="font-medium text-2xl text-gray-200">Options</h1>
+      <h1 class="font-medium text-2xl text-green-default">Options</h1>
       <BtnClose @click="closeView" />
     </header>
 
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-gray-100 text-xl w-full">General</h2>
+      <h2 class="mb-3 text-gray-200 text-xl w-full">General</h2>
       <div class="flex items-center mr-6 my-2 px-4 text-gray-100">
         <p class="mr-4">Target</p>
         <Dropdown
@@ -78,7 +78,7 @@
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-gray-100 text-xl w-full">WebP</h2>
+      <h2 class="mb-3 text-gray-200 text-xl w-full">WebP</h2>
       <div class="px-4 text-gray-100 w-1/2">
         <div class="flex items-center w-full">
           <p class="mr-6">Quality</p>
@@ -122,7 +122,7 @@
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-gray-100 text-xl w-full">JPEG</h2>
+      <h2 class="mb-3 text-gray-200 text-xl w-full">JPEG</h2>
       <div class="px-4 text-gray-100 w-1/2">
         <div class="flex items-center w-full">
           <p class="mr-6">Quality</p>
@@ -136,7 +136,7 @@
     <div
       class="border-2 border-gray-700 flex flex-wrap my-4 p-4 rounded-md w-full"
     >
-      <h2 class="mb-3 text-gray-100 text-xl w-full">PNG</h2>
+      <h2 class="mb-3 text-gray-200 text-xl w-full">PNG</h2>
       <div class="px-4 text-gray-100 w-1/2">
         <div class="flex items-center w-full">
           <p class="mr-6">Quality</p>
