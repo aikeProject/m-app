@@ -5,7 +5,7 @@
       <BtnClose @click="closeView" />
     </header>
     <div class="flex flex-wrap items-center justify-center pt-16 w-full">
-      <div class="mb-10 w-full h-48">
+      <div class="flex items-center justify-center">
         <svg
           version="1.1"
           id="optimus-logo"
