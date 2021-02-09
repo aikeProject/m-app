@@ -36,7 +36,7 @@ jobs:
           wails build -p
           echo "converting .app into a .dmg"
           npm install -g appdmg
-          appdmg dmg-spec.json optimus.dmg
+          appdmg dmg-spec.json magick-app.dmg
         if: matrix.platform == 'macos-latest'
       - name: Build package linux
         run: |
@@ -52,7 +52,7 @@ jobs:
           # wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           # chmod +x linuxdeploy*.AppImage
           # ls ./
-          # ./linuxdeploy*.AppImage --appdir AppDir --executable ./build/optimus --desktop-file=optimus.AppImage.desktop --icon-file=appicon--512.png --output appimage
+          # ./linuxdeploy*.AppImage --appdir AppDir --executable ./build/magick-app --desktop-file=magick-app.AppImage.desktop --icon-file=appicon--512.png --output appimage
         if: matrix.platform == 'ubuntu-latest'
       - name: Build package windows
         run: |
@@ -67,26 +67,26 @@ jobs:
       - name: upload artifact macOS
         uses: actions/upload-artifact@v1
         with:
-          name: optimus-macOS
-          path: optimus.dmg
+          name: magick-app-macOS
+          path: magick-app.dmg
         if: matrix.platform == 'macos-latest'
       - name: upload artifact linux
         uses: actions/upload-artifact@v2-preview
         with:
-          name: optimus-linux
-          path: ./build/optimus
+          name: magick-app-linux
+          path: ./build/magick-app
         if: matrix.platform == 'ubuntu-latest'
       #      - name: upload artifact linux appimage
       #        uses: actions/upload-artifact@v2-preview
       #        with:
-      #          name: optimus-linux-appimage
+      #          name: magick-app-linux-appimage
       #          path: Optimus-${{ env.VERSION }}-x86_64.AppImage
       #        if: matrix.platform == 'ubuntu-latest'
       - name: upload artifact windows
         uses: actions/upload-artifact@v1
         with:
-          name: optimus-windows
-          path: ./build/optimus.exe
+          name: magick-app-windows
+          path: ./build/magick-app.exe
         if: matrix.platform == 'windows-latest'
 
   release:
@@ -106,7 +106,7 @@ jobs:
       - name: Download macOS package
         uses: actions/download-artifact@v1
         with:
-          name: optimus-macOS
+          name: magick-app-macOS
       - name: Upload macOS package to release
         id: upload-macOS-release-asset
         uses: actions/upload-release-asset@v1
@@ -114,13 +114,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./optimus-macOS/optimus.dmg
+          asset_path: ./magick-app-macOS/magick-app.dmg
           asset_name: optimus_${{ github.ref }}_macOS.dmg
           asset_content_type: application/octet-stream
       - name: Download linux package
         uses: actions/download-artifact@v1
         with:
-          name: optimus-linux
+          name: magick-app-linux
       - name: Upload Linux package to release
         id: upload-linux-release-asset
         uses: actions/upload-release-asset@v1
@@ -128,13 +128,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./optimus-linux/optimus
+          asset_path: ./magick-app-linux/magick-app
           asset_name: optimus_${{ github.ref }}_linux_x86_64
           asset_content_type: application/octet-stream
       - name: Download windows package
         uses: actions/download-artifact@v1
         with:
-          name: optimus-windows
+          name: magick-app-windows
       - name: Upload Windows package to release
         id: upload-windows-release-asset
         uses: actions/upload-release-asset@v1
@@ -142,6 +142,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./optimus-windows/optimus.exe
+          asset_path: ./magick-app-windows/magick-app.exe
           asset_name: optimus_${{ github.ref }}_windows_x86_64.exe
           asset_content_type: application/octet-stream
