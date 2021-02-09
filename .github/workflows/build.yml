@@ -7,7 +7,8 @@ jobs:
     strategy:
       matrix:
         go-version: [1.14.x]
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [ubuntu-latest]
+#        platform: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Install Go
@@ -64,84 +65,84 @@ jobs:
           choco install mingw
           wails build -p
         if: matrix.platform == 'windows-latest'
-      - name: upload artifact macOS
-        uses: actions/upload-artifact@v1
-        with:
-          name: magick-app-macOS
-          path: magick-app.dmg
-        if: matrix.platform == 'macos-latest'
-      - name: upload artifact linux
-        uses: actions/upload-artifact@v2-preview
-        with:
-          name: magick-app-linux
-          path: ./build/magick-app
-        if: matrix.platform == 'ubuntu-latest'
-      #      - name: upload artifact linux appimage
-      #        uses: actions/upload-artifact@v2-preview
-      #        with:
-      #          name: magick-app-linux-appimage
-      #          path: Optimus-${{ env.VERSION }}-x86_64.AppImage
-      #        if: matrix.platform == 'ubuntu-latest'
-      - name: upload artifact windows
-        uses: actions/upload-artifact@v1
-        with:
-          name: magick-app-windows
-          path: ./build/magick-app.exe
-        if: matrix.platform == 'windows-latest'
-
-  release:
-    runs-on: ubuntu-latest
-    needs: package
-    steps:
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: true
-          prerelease: true
-      - name: Download macOS package
-        uses: actions/download-artifact@v1
-        with:
-          name: magick-app-macOS
-      - name: Upload macOS package to release
-        id: upload-macOS-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./magick-app-macOS/magick-app.dmg
-          asset_name: optimus_${{ github.ref }}_macOS.dmg
-          asset_content_type: application/octet-stream
-      - name: Download linux package
-        uses: actions/download-artifact@v1
-        with:
-          name: magick-app-linux
-      - name: Upload Linux package to release
-        id: upload-linux-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./magick-app-linux/magick-app
-          asset_name: optimus_${{ github.ref }}_linux_x86_64
-          asset_content_type: application/octet-stream
-      - name: Download windows package
-        uses: actions/download-artifact@v1
-        with:
-          name: magick-app-windows
-      - name: Upload Windows package to release
-        id: upload-windows-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./magick-app-windows/magick-app.exe
-          asset_name: optimus_${{ github.ref }}_windows_x86_64.exe
-          asset_content_type: application/octet-stream
+#      - name: upload artifact macOS
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: magick-app-macOS
+#          path: magick-app.dmg
+#        if: matrix.platform == 'macos-latest'
+#      - name: upload artifact linux
+#        uses: actions/upload-artifact@v2-preview
+#        with:
+#          name: magick-app-linux
+#          path: ./build/magick-app
+#        if: matrix.platform == 'ubuntu-latest'
+#      #      - name: upload artifact linux appimage
+#      #        uses: actions/upload-artifact@v2-preview
+#      #        with:
+#      #          name: magick-app-linux-appimage
+#      #          path: Optimus-${{ env.VERSION }}-x86_64.AppImage
+#      #        if: matrix.platform == 'ubuntu-latest'
+#      - name: upload artifact windows
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: magick-app-windows
+#          path: ./build/magick-app.exe
+#        if: matrix.platform == 'windows-latest'
+#
+#  release:
+#    runs-on: ubuntu-latest
+#    needs: package
+#    steps:
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: ${{ github.ref }}
+#          draft: true
+#          prerelease: true
+#      - name: Download macOS package
+#        uses: actions/download-artifact@v1
+#        with:
+#          name: magick-app-macOS
+#      - name: Upload macOS package to release
+#        id: upload-macOS-release-asset
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./magick-app-macOS/magick-app.dmg
+#          asset_name: optimus_${{ github.ref }}_macOS.dmg
+#          asset_content_type: application/octet-stream
+#      - name: Download linux package
+#        uses: actions/download-artifact@v1
+#        with:
+#          name: magick-app-linux
+#      - name: Upload Linux package to release
+#        id: upload-linux-release-asset
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./magick-app-linux/magick-app
+#          asset_name: optimus_${{ github.ref }}_linux_x86_64
+#          asset_content_type: application/octet-stream
+#      - name: Download windows package
+#        uses: actions/download-artifact@v1
+#        with:
+#          name: magick-app-windows
+#      - name: Upload Windows package to release
+#        id: upload-windows-release-asset
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./magick-app-windows/magick-app.exe
+#          asset_name: optimus_${{ github.ref }}_windows_x86_64.exe
+#          asset_content_type: application/octet-stream
